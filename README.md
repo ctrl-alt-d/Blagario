@@ -2,7 +2,7 @@
 
 This is just an experimental lab to test to make a multiplayer web game without javascript (or almost without). Components:
 
-* blazor
+* blazor ( netcore 3 preview 6 )
 * html
 * css
 
