@@ -1,0 +1,41 @@
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.world {
+    position: absolute;
+    background-color: black;    
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.agar-element {
+    position: absolute;
+    border-radius: 50%;
+    background-color: orange;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.cell {
+    position: absolute;
+    border-radius: 50%;
+    background-color: orange;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.virus {
+    position: absolute;   
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    background: green;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+}

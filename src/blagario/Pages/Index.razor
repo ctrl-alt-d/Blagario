@@ -1,0 +1,17 @@
+﻿@page "/"
+@inherits BaseIndex
+
+@World.MouseX
+
+<div 
+    class="world" 
+    style="@World.CssStyle"
+    @onmousemove="@TrackMouse"
+>
+    @foreach (var element in World.Elements )
+    {
+        <div class="@element.CssClass"
+            style="@element.CssStyle">
+        </div>
+    }
+</div>
