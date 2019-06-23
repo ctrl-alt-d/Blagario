@@ -2,16 +2,25 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.world {
-    position: absolute;
-    background-color: black;    
+.universe {
+    position: fixed;
+    background-color: grey;    
     margin: 0;
     padding: 0;
     border: 0;
 }
 
+
+.world {
+    position: fixed;
+    background-color: black;    
+    margin: 0;
+    padding: 0;
+    border: 1px solid red;
+}
+
 .agar-element {
-    position: absolute;
+    position: fixed;
     border-radius: 50%;
     background-color: orange;
     margin: 0;
@@ -20,7 +29,7 @@ html, body {
 }
 
 .cell {
-    position: absolute;
+    position: fixed;
     border-radius: 50%;
     background-color: orange;
     margin: 0;
@@ -29,7 +38,7 @@ html, body {
 }
 
 .virus {
-    position: absolute;   
+    position: fixed;   
     border-radius: 50%;
     width: 100px;
     height: 100px;

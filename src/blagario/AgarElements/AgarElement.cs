@@ -5,6 +5,8 @@ namespace blagario.elements
 {
     public enum ElementType
     {
+        Universe,
+        World,
         Virus,
         Cell,
         Pellet,
@@ -25,11 +27,13 @@ namespace blagario.elements
         }        
         public double Radius => Math.Sqrt( _Mass / Math.PI );
         public double Diameter => Radius * 2;
-        public World World {get; protected set;}
+        public long CssX => (long)(X-Radius);
+        public long CssY => (long)(Y-Radius);
+        public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
-        public virtual string CssStyle => $@"
-            top: {(Y-Radius).ToString()}px ;
-            left: {(X-Radius).ToString()}px ;
+        public virtual string CssStyle( Cell c) => $@"
+            top: {c.translateY(CssY).ToString()}px ;
+            left: {c.translateX(CssX).ToString()}px ;
             width: {Diameter.ToString()}px ;
             height: {Diameter.ToString()}px ;
             ";

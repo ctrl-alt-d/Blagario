@@ -9,7 +9,7 @@ namespace blagario
     public abstract class BaseIndex : ComponentBase, IDisposable
     {
 
-        [Inject] protected World World {get; set; }
+        [Inject] protected Universe Universe {get; set; }
         [Inject] protected Cell MyCell {get; set; }
 
         public void Dispose()

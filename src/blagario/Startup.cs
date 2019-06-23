@@ -23,7 +23,7 @@ namespace blagario
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<World>();
+            services.AddSingleton<Universe>();
             services.AddTransient<Cell>();
             services.AddHostedService<TimedHostedService>();
         }

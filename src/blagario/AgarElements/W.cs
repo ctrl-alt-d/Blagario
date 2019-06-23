@@ -2,9 +2,9 @@ namespace blagario.elements
 {
     public class W: MoveableAgarElement
     {
-        private W(World world, long x, long y, long vx, long vy)
+        private W(Universe universe, long x, long y, long vx, long vy)
         {
-            this.World = world;
+            this.Universe = universe;
             this._Mass = 5;
             this.ElementType = ElementType.W;
             this.Vx = vx;
@@ -13,9 +13,9 @@ namespace blagario.elements
             this.Y = y;
         }
 
-        internal static W CreateW(World world, long x, long y, long vx, long vy)
+        internal static W CreateW(Universe universe, long x, long y, long vx, long vy)
         {
-            return new W(world,x,y,vx,vy);
+            return new W(universe,x,y,vx,vy);
         }
 
     }
