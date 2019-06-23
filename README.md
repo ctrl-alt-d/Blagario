@@ -15,7 +15,7 @@ This is not a real project, just a lab to enjoy and for experimental purposes (c
 * All elements ( cell, viruses, world, pellets, W) are simple C# classes.
 * Each element has a `Tic` method who makes game move on.
 * They are a `HostedService` who calls the `Tic`s.
-* `World` is injected as `AddSingleton`: one World for all people.
+* `Universe` is injected as `AddSingleton`: one Universe for all people.
 * `Cell` is injected as `Transient`: one Cell for each gamer.
 * Mouse is tracked by blazor ( `@onmousemove`'s `UIMouseEventArgs` )
 

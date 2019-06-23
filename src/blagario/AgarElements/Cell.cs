@@ -4,18 +4,23 @@ namespace blagario.elements
 {
     public class Cell: MoveableAgarElement
     {
-        public Cell(World world)
+        public Cell(Universe universe)
         {
-            this.World = world;
+            this.Universe = universe;
             this._Mass = 500; //ToDo: move to 17 some day.
             this.ElementType = ElementType.Cell;
-            var goodPlaceForX = getrandom.Next(0,(int)world.X);
-            var goodPlaceForY = getrandom.Next(0,(int)world.Y);
+            var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
+            var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
             this.X = goodPlaceForX;
             this.Y = goodPlaceForY;            
-            world.Elements.Add(this);
+            universe.World.Elements.Add(this);
             MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
         }
+
+        public long VisibleAreaX { set; get; } = 800;  //Todo: get navigator width
+        public long VisibleAreaY { set; get; } = 600;  //Todo: get navigator height
+
+        public int Zoom { set; get; } = 10;
 
         public string MyColor;
 
@@ -27,7 +32,27 @@ namespace blagario.elements
 
         static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
 
-        public override string CssStyle => base.CssStyle + $" background-color: #{MyColor}";
+        public override string CssStyle(Cell c) => base.CssStyle(c) + $" background-color: #{MyColor}";
+
+        public long translateX(double x) => this.translateX( (long)x );
+        public long translateX( long x )
+        {
+            var b = x - this.X +  ( VisibleAreaX / 2 );
+            return b;
+        }
+        public long translateY(double y) => this.translateX( (long)y );
+        public long translateY( long y )
+        {
+            var b = y - this.Y + ( VisibleAreaY / 2 );
+            return b;
+        }
+
+        public override void PointTo( long x, long y )
+        {
+            var bx = x + this.X - ( VisibleAreaX / 2 );
+            var by = y + this.Y - ( VisibleAreaY / 2 );
+            base.PointTo( x + bx, y + by );
+        }
 
     }
 }

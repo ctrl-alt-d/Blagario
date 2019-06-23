@@ -1,17 +1,20 @@
 ﻿@page "/"
 @inherits BaseIndex
 
-@World.MouseX
-
 <div 
-    class="world" 
-    style="@World.CssStyle"
+    class="universe" 
+    style="@Universe.CssStyle(MyCell)"
     @onmousemove="@TrackMouse"
 >
-    @foreach (var element in World.Elements )
-    {
-        <div class="@element.CssClass"
-            style="@element.CssStyle">
-        </div>
-    }
+    <div 
+        class="world" 
+        style="@Universe.World.CssStyle(MyCell)"
+    >
+        @foreach (var element in Universe.World.Elements )
+        {
+            <div class="@element.CssClass"
+                style="@element.CssStyle(MyCell)">
+            </div>
+        }
+    </div>
 </div>

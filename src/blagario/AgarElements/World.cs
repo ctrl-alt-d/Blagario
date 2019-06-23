@@ -11,21 +11,19 @@ namespace blagario.elements
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
 
-        public long MouseX {get; set; }
-        public long MouseY {get; set; }
-
-        public override string CssStyle =>$@"
-            top: 0px ;
-            left: 0px ;
+        public override string CssStyle( Cell c ) =>$@"
+            top: {c.translateY(0)}px ;
+            left: {c.translateX(0)}px;
             width: {X.ToString()}px ;
             height: {X.ToString()}px ; 
             "; 
 
-        public World()
+        public World(Universe universe)
         {
             this.X = 1000;
             this.Y = 1000;
             Elements = new List<AgarElement>();
+            Universe = universe;
         }
 
         public long TotalMass => Elements.Sum( x=> x.Mass );
@@ -48,7 +46,7 @@ namespace blagario.elements
             while( Viruses.Count() < MaxViruses && TotalMass < MaxMass )
             {
                 // System.Console.WriteLine($"Creating new viruse. Current mass [{TotalMass}/{MaxMass}]. Current viruses [{Viruses.Count()}/{MaxViruses}]");
-                var newViruse = Virus.CreateVirus(this);
+                var newViruse = Virus.CreateVirus(this.Universe);
                 
             }
         }

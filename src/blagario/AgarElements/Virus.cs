@@ -6,22 +6,22 @@ namespace blagario.elements
 {
     public class Virus : AgarElement
     {
-        private Virus(World world, long x, long y)
+        private Virus(Universe universe, long x, long y)
         {
-            this.World = world;
+            this.Universe = universe;
             this._Mass = 100;
             this.ElementType = ElementType.Virus;
             this.X = x;
             this.Y = y;
         }
 
-        internal static Virus CreateVirus(World world)
+        internal static Virus CreateVirus(Universe universe)
         {
-            var goodPlaceForX = getrandom.Next(0,(int)world.X);
-            var goodPlaceForY = getrandom.Next(0,(int)world.Y);
+            var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
+            var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
 
-            var v = new Virus(world, goodPlaceForX, goodPlaceForY);
-            world.Elements.Add(v);
+            var v = new Virus(universe, goodPlaceForX, goodPlaceForY);
+            universe.World.Elements.Add(v);
             return v;
         }
 

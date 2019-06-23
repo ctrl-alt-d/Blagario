@@ -11,9 +11,9 @@ namespace blagario.elements
         private Timer _timer;
         private World World;
 
-        public TimedHostedService(World world)
+        public TimedHostedService(Universe universe)
         {
-            World = world;
+            World = universe.World;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
