@@ -11,9 +11,9 @@ namespace blagario.elements
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
 
-        public override string CssStyle( Cell c ) =>$@"
-            top: {c.translateY(0)}px ;
-            left: {c.translateX(0)}px;
+        public override string CssStyle( Eyeglass c ) =>$@"
+            top: {c.YGame2Physics(0)}px ;
+            left: {c.XGame2Physics(0)}px;
             width: {X.ToString()}px ;
             height: {X.ToString()}px ; 
             "; 

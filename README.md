@@ -16,7 +16,7 @@ This is not a real project, just a lab to enjoy and for experimental purposes (c
 * Each element has a `Tic` method who makes game move on.
 * They are a `HostedService` who calls the `Tic`s.
 * `Universe` is injected as `AddSingleton`: one Universe for all people.
-* `Cell` is injected as `Transient`: one Cell for each gamer.
+* `Cell` is injected as `Scoped`: one Cell for each gamer (connection).
 * Mouse is tracked by blazor ( `@onmousemove`'s `UIMouseEventArgs` )
 
 ### Collaboration wanted:
