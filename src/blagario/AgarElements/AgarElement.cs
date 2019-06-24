@@ -31,9 +31,9 @@ namespace blagario.elements
         public long CssY => (long)(Y-Radius);
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
-        public virtual string CssStyle( Cell c) => $@"
-            top: {c.translateY(CssY).ToString()}px ;
-            left: {c.translateX(CssX).ToString()}px ;
+        public virtual string CssStyle( Eyeglass c) => $@"
+            top: {c.YGame2Physics(CssY).ToString()}px ;
+            left: {c.XGame2Physics(CssX).ToString()}px ;
             width: {Diameter.ToString()}px ;
             height: {Diameter.ToString()}px ;
             ";

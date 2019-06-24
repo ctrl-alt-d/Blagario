@@ -3,17 +3,17 @@
 
 <div 
     class="universe" 
-    style="@Universe.CssStyle(MyCell)"
+    style="@Universe.CssStyle(Eyeglass)"
     @onmousemove="@TrackMouse"
 >
     <div 
         class="world" 
-        style="@Universe.World.CssStyle(MyCell)"
+        style="@Universe.World.CssStyle(Eyeglass)"
     >
         @foreach (var element in Universe.World.Elements )
         {
             <div class="@element.CssClass"
-                style="@element.CssStyle(MyCell)">
+                style="@element.CssStyle(Eyeglass)">
             </div>
         }
     </div>

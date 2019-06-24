@@ -15,5 +15,22 @@
     <app>@(await Html.RenderComponentAsync<App>())</app>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <script>
+
+        window.AreaResized = (DotNetRef) =>
+        {
+            window.addEventListener("resize", () => {DotNetRef.invokeMethodAsync('OnBrowserResize').then(data => data);} );
+            
+        }
+
+        window.GetSize = () => {
+            var x = window.innerWidth;
+            var y = window.innerHeight;        
+            return [ x , y ];
+        };
+
+    </script>
+
 </body>
 </html>

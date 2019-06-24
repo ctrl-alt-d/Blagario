@@ -15,10 +15,9 @@ namespace blagario.elements
             this.Y = goodPlaceForY;            
             universe.World.Elements.Add(this);
             MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
-        }
+            System.Console.WriteLine("Creating Cell");
 
-        public long VisibleAreaX { set; get; } = 800;  //Todo: get navigator width
-        public long VisibleAreaY { set; get; } = 600;  //Todo: get navigator height
+        }
 
         public int Zoom { set; get; } = 10;
 
@@ -32,26 +31,11 @@ namespace blagario.elements
 
         static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
 
-        public override string CssStyle(Cell c) => base.CssStyle(c) + $" background-color: #{MyColor}";
-
-        public long translateX(double x) => this.translateX( (long)x );
-        public long translateX( long x )
-        {
-            var b = x - this.X +  ( VisibleAreaX / 2 );
-            return b;
-        }
-        public long translateY(double y) => this.translateX( (long)y );
-        public long translateY( long y )
-        {
-            var b = y - this.Y + ( VisibleAreaY / 2 );
-            return b;
-        }
+        public override string CssStyle(Eyeglass c) => base.CssStyle(c) + $" background-color: #{MyColor}";
 
         public override void PointTo( long x, long y )
         {
-            var bx = x + this.X - ( VisibleAreaX / 2 );
-            var by = y + this.Y - ( VisibleAreaY / 2 );
-            base.PointTo( x + bx, y + by );
+            base.PointTo( x, y );
         }
 
     }
