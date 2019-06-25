@@ -16,7 +16,7 @@ namespace blagario.elements
         public long MouseX {get; set; }
         public long MouseY {get; set; }
 
-        public override string CssStyle( Cell c ) =>$@"
+        public override string CssStyle( Eyeglass c ) =>$@"
             top: 0px ;
             left: 0px;
             width: 100%;
