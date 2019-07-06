@@ -5,17 +5,19 @@ using System.Threading.Tasks;
 
 namespace blagario.elements
 {
+
     public class World : AgarElement
     {
         public List<AgarElement> Elements;
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
+        public const long MaxPellets = 1000;        
 
         public override string CssStyle( Eyeglass c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
             left: {c.XGame2Physics(0)}px;
-            width: {X.ToString()}px ;
-            height: {X.ToString()}px ; 
+            width: {(X * c.Cell.Zoom).ToString()}px ;
+            height: {(Y * c.Cell.Zoom).ToString()}px ; 
             "; 
 
         public World(Universe universe)
@@ -28,28 +30,58 @@ namespace blagario.elements
 
         public long TotalMass => Elements.Sum( x=> x.Mass );
         public IEnumerable<Virus> Viruses => Elements.Where(x => x.ElementType == ElementType.Virus ).Select(x=>x as Virus);
+        public IEnumerable<Pellet> Pellets => Elements.Where(x => x.ElementType == ElementType.Pellet ).Select(x=>x as Pellet);
 
+
+        public event EventHandler OnTicReached;
+
+        protected virtual void OnTic(EventArgs e)
+        {
+            EventHandler handler = OnTicReached;
+            handler?.Invoke(this, e);
+        }
         public override async Task Tic()
         {
-            var currentElements = this.Elements.ToList();  // make a copy because TimerService is modifing the array.
-            foreach (var e in currentElements)
-            {
-                await e.Tic();
-            }
-            CheckIfWoldNedsMoreViruses();            
-            await Task.Delay(1);            
+            List<AgarElement> currentElements;
+            lock(this.Elements) currentElements = this.Elements.ToList();
+            CheckIfWoldNedsMoreViruses(currentElements);            
+            CheckIfWoldNedsMorePellets(currentElements);            
+
+            lock(this.Elements) currentElements = this.Elements.ToList();
+            foreach (var e in currentElements) await e.Tic();
+
             await base.Tic();
+
+            OnTic( EventArgs.Empty );
         }
 
-        private void CheckIfWoldNedsMoreViruses()
+        private void CheckIfWoldNedsMorePellets(List<AgarElement> currentElements)
         {
-            while( Viruses.Count() < MaxViruses && TotalMass < MaxMass )
+            var nPellets = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
+            var mass = currentElements.Sum(e=>e.Mass);
+            if ( nPellets < MaxPellets && mass < MaxMass )
+            lock(this.Elements)
+            while( nPellets < MaxPellets && mass < MaxMass )
             {
-                // System.Console.WriteLine($"Creating new viruse. Current mass [{TotalMass}/{MaxMass}]. Current viruses [{Viruses.Count()}/{MaxViruses}]");
-                var newViruse = Virus.CreateVirus(this.Universe);
-                
+                var e = Pellet.CreatePellet(this.Universe);        
+                mass += e.Mass;        
+                nPellets++;
+            }            
+        }
+
+        private void CheckIfWoldNedsMoreViruses(List<AgarElement> currentElements)
+        {
+            var nViruses = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
+            var mass = currentElements.Sum(e=>e.Mass);
+
+            if (nViruses < MaxViruses && mass < MaxMass)
+            lock(this.Elements)
+            while( nViruses < MaxViruses && mass < MaxMass )
+            {
+                var e = Virus.CreateVirus(this.Universe);
+                mass += e.Mass;        
+                nViruses++;                
             }
         }
-
     }
 }
