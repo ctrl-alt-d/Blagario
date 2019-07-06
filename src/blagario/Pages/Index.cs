@@ -11,7 +11,6 @@ namespace blagario
 
     public abstract class BaseIndex : ComponentBase, IDisposable
     {
-
         [Inject] protected Universe Universe {get; set; }        
         [Inject] protected Cell MyCell {get; set; }
         [Inject] protected Eyeglass Eyeglass {get; set; }
@@ -22,17 +21,28 @@ namespace blagario
         {
         }
 
+        protected List<AgarElement> VisibleElements = new List<AgarElement>();
+
+        protected bool IsDirty = false;
+
         protected override void OnInit()
-        {
+        {      
+            Universe.World.OnTicReached += (a,b)=> Invoke( () =>{
+                IsDirty = true;
+            });   
+
             Invoke(
                 async () =>
                 {
                     while (true)
                     {
                         await Task.Delay(17);
+                        if (! IsDirty) continue;
+                        VisibleElements = Universe.World.Elements.Where( e=> Eyeglass.OnArea(e) ).ToList();
                         StateHasChanged();                    
                     }
-                });           
+                });   
+
         }
         
         protected void TrackMouse(UIMouseEventArgs e)

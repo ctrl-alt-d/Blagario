@@ -8,8 +8,8 @@ namespace blagario.elements
         Universe,
         World,
         Virus,
-        Cell,
         Pellet,
+        Cell,
         W
     }
     public class AgarElement
@@ -17,9 +17,9 @@ namespace blagario.elements
         protected static readonly Random getrandom = new Random();
 
         public ElementType ElementType {get; protected set; }
-        public long X {set; get; }
-        public long Y {set; get; }
-        protected double _Mass {set; get; }
+        public double X {set; get; }
+        public double Y {set; get; }
+        public double _Mass {set; get; }
         public long Mass => (int)_Mass;
         public virtual async Task Tic() 
         { 
@@ -34,8 +34,8 @@ namespace blagario.elements
         public virtual string CssStyle( Eyeglass c) => $@"
             top: {c.YGame2Physics(CssY).ToString()}px ;
             left: {c.XGame2Physics(CssX).ToString()}px ;
-            width: {Diameter.ToString()}px ;
-            height: {Diameter.ToString()}px ;
+            width: {(Diameter * c.Cell.Zoom).ToString()}px ;
+            height: {(Diameter * c.Cell.Zoom).ToString()}px ;
             ";
     }
 }

@@ -5,15 +5,15 @@ namespace blagario.elements
 {
     public class MoveableAgarElement: AgarElement
     {
-        public long Vx {get; set;} = 0;
-        public long Vy {get; set;} = 0;
+        protected double Vx {get; private set;} = 0;
+        protected double Vy {get; private set;} = 0;
 
-        protected readonly long Vel = 1;
+        public virtual double Vel {get; protected set;} = 1;
 
-        public virtual void PointTo( long x, long y )
+        public virtual void PointTo( double x, double y )
         {            
-            this.Vx = this.Vel * (x-this.X<0?-1:1);
-            this.Vy = this.Vel * (y-this.Y<0?-1:1);
+            this.Vx =  this.Vel * (x-this.X<0?-1.0:1.0);
+            this.Vy =  this.Vel * (y-this.Y<0?-1.0:1.0);
         }
 
         public override async Task  Tic() {

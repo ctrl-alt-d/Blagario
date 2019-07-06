@@ -19,31 +19,48 @@ namespace blagario.elements
         public long VisibleAreaY { set; get; } 
 
         /* --- */
-        public long XGame2Physics(double x) => this.XGame2Physics( (long)x );
-        public long XGame2Physics( long x )
+        public long XGame2Physics( double x )
         {
-            var b = x - Cell.X +  ( this.VisibleAreaX / 2 );
-            return b;
+            var distance_to_cell = ( x - Cell.X ) * Cell.Zoom;
+            var center_point = this.VisibleAreaX / 2;
+            var distance_to_center_point = center_point + distance_to_cell;
+            return (long) distance_to_center_point;
         }
-        public long YGame2Physics(double y) => this.XGame2Physics( (long)y );
-        public long YGame2Physics( long y )
+        public long YGame2Physics( double y )
         {
-            var b = y - Cell.Y + ( this.VisibleAreaY / 2 );
-            return b;
+            var distance_to_cell = ( y - Cell.Y ) * Cell.Zoom;
+            var center_point = this.VisibleAreaY / 2;
+            var distance_to_center_point = center_point + distance_to_cell;
+            return (long) distance_to_center_point;
         }
 
         /* --- */
-        public long XPysics2Game( int x ) => XPysics2Game( (long)x );
-        public long XPysics2Game( long x )
+        public double XPysics2Game( long x )
         {
-            var bx = x + Cell.X - ( this.VisibleAreaX / 2 );
-            return bx;
+            var center_point = this.VisibleAreaX / 2;
+            var distance_to_center_point = (x - center_point) / Cell.Zoom;
+            var position = Cell.X + distance_to_center_point;
+            return position;
         }
-        public long YPysics2Game( int y ) => YPysics2Game( (long)y );
-        public long YPysics2Game( long y )
+
+        public bool OnArea(AgarElement e)
         {
-            var by = y + Cell.Y - ( this.VisibleAreaY / 2 );
-            return by;
+            if (e.ElementType == ElementType.Universe ) return true;
+            if (e.ElementType == ElementType.World ) return true;
+            var diameter = e.Diameter;
+            if (this.XGame2Physics(e.X) < 0 - diameter ) return false;
+            if (this.XGame2Physics(e.X) > ( this.VisibleAreaX + diameter) ) return false;
+            if (this.YGame2Physics(e.Y) < 0 - diameter ) return false;
+            if (this.YGame2Physics(e.Y) > ( this.VisibleAreaY + diameter ) ) return false;
+            return true;
+        }
+
+        public double YPysics2Game( long y )
+        {
+            var center_point = this.VisibleAreaY / 2;
+            var distance_to_center_point = (y - center_point) / Cell.Zoom;
+            var position = Cell.Y + distance_to_center_point;
+            return position;
         }
 
         /* --- */
