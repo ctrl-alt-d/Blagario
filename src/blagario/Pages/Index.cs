@@ -11,7 +11,6 @@ namespace blagario
 
     public abstract class BaseIndex : ComponentBase, IDisposable
     {
-
         [Inject] protected Universe Universe {get; set; }        
         [Inject] protected Cell MyCell {get; set; }
         [Inject] protected Eyeglass Eyeglass {get; set; }
@@ -22,6 +21,8 @@ namespace blagario
         {
         }
 
+        protected List<AgarElement> UIList;
+
         protected override void OnInit()
         {
             Invoke(
@@ -29,6 +30,7 @@ namespace blagario
                 {
                     while (true)
                     {
+                        lock(Universe.World.Elements) UIList = Universe.World.Elements.ToList();
                         await Task.Delay(17);
                         StateHasChanged();                    
                     }

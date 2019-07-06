@@ -46,5 +46,15 @@ html, body {
     margin: 0;
     padding: 0;
     border: 0;
+}
 
+.pellet {
+    position: fixed;   
+    border-radius: 50%;
+    width: 1px;
+    height: 1px;
+    background: green;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }

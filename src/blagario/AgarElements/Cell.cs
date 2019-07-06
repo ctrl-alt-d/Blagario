@@ -7,7 +7,7 @@ namespace blagario.elements
         public Cell(Universe universe)
         {
             this.Universe = universe;
-            this._Mass = 500; //ToDo: move to 17 some day.
+            this._Mass = 42; //ToDo: move to 17 some day.
             this.ElementType = ElementType.Cell;
             var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
             var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
@@ -19,7 +19,8 @@ namespace blagario.elements
 
         }
 
-        public int Zoom { set; get; } = 10;
+        public override double Vel => 0.5;
+        public int Zoom { set; get; } = 8;
 
         public string MyColor;
 
@@ -33,7 +34,7 @@ namespace blagario.elements
 
         public override string CssStyle(Eyeglass c) => base.CssStyle(c) + $" background-color: #{MyColor}";
 
-        public override void PointTo( long x, long y )
+        public override void PointTo( double x, double y )
         {
             base.PointTo( x, y );
         }
