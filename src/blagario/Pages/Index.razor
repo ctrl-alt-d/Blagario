@@ -10,7 +10,7 @@
         class="world" 
         style="@Universe.World.CssStyle(Eyeglass)"
     >
-        @foreach (var element in UIList )
+        @foreach (var element in VisibleElements )
         {
             <div class="@element.CssClass"
                 style="@element.CssStyle(Eyeglass)">

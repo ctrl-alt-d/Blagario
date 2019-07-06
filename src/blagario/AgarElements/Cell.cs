@@ -15,8 +15,6 @@ namespace blagario.elements
             this.Y = goodPlaceForY;            
             universe.World.Elements.Add(this);
             MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
-            System.Console.WriteLine("Creating Cell");
-
         }
 
         public override double Vel => 0.5;
@@ -25,7 +23,7 @@ namespace blagario.elements
         public string MyColor;
 
         public override async Task Tic() {
-            _Mass = _Mass * 0.9999;
+            _Mass = _Mass * 0.999;
             if (_Mass<10) _Mass = 10;
             await base.Tic();
         }

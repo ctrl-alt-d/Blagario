@@ -5,8 +5,8 @@ namespace blagario.elements
 {
     public class MoveableAgarElement: AgarElement
     {
-        private double Vx {get; set;} = 0;
-        private double Vy {get; set;} = 0;
+        protected double Vx {get; private set;} = 0;
+        protected double Vy {get; private set;} = 0;
 
         public virtual double Vel {get; protected set;} = 1;
 
@@ -14,7 +14,6 @@ namespace blagario.elements
         {            
             this.Vx =  this.Vel * (x-this.X<0?-1.0:1.0);
             this.Vy =  this.Vel * (y-this.Y<0?-1.0:1.0);
-            System.Console.WriteLine(  $"Nou x y {Vx} {Vy}" );
         }
 
         public override async Task  Tic() {

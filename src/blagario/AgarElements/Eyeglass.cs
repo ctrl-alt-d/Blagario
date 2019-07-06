@@ -42,6 +42,19 @@ namespace blagario.elements
             var position = Cell.X + distance_to_center_point;
             return position;
         }
+
+        public bool OnArea(AgarElement e)
+        {
+            if (e.ElementType == ElementType.Universe ) return true;
+            if (e.ElementType == ElementType.World ) return true;
+            var diameter = e.Diameter;
+            if (this.XGame2Physics(e.X) < 0 - diameter ) return false;
+            if (this.XGame2Physics(e.X) > ( this.VisibleAreaX + diameter) ) return false;
+            if (this.YGame2Physics(e.Y) < 0 - diameter ) return false;
+            if (this.YGame2Physics(e.Y) > ( this.VisibleAreaY + diameter ) ) return false;
+            return true;
+        }
+
         public double YPysics2Game( long y )
         {
             var center_point = this.VisibleAreaY / 2;

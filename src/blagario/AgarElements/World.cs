@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace blagario.elements
 {
+
     public class World : AgarElement
     {
         public List<AgarElement> Elements;
@@ -31,6 +32,14 @@ namespace blagario.elements
         public IEnumerable<Virus> Viruses => Elements.Where(x => x.ElementType == ElementType.Virus ).Select(x=>x as Virus);
         public IEnumerable<Pellet> Pellets => Elements.Where(x => x.ElementType == ElementType.Pellet ).Select(x=>x as Pellet);
 
+
+        public event EventHandler OnTicReached;
+
+        protected virtual void OnTic(EventArgs e)
+        {
+            EventHandler handler = OnTicReached;
+            handler?.Invoke(this, e);
+        }
         public override async Task Tic()
         {
             List<AgarElement> currentElements;
@@ -42,12 +51,15 @@ namespace blagario.elements
             foreach (var e in currentElements) await e.Tic();
 
             await base.Tic();
+
+            OnTic( EventArgs.Empty );
         }
 
         private void CheckIfWoldNedsMorePellets(List<AgarElement> currentElements)
         {
             var nPellets = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
             var mass = currentElements.Sum(e=>e.Mass);
+            if ( nPellets < MaxPellets && mass < MaxMass )
             lock(this.Elements)
             while( nPellets < MaxPellets && mass < MaxMass )
             {
@@ -61,6 +73,8 @@ namespace blagario.elements
         {
             var nViruses = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
             var mass = currentElements.Sum(e=>e.Mass);
+
+            if (nViruses < MaxViruses && mass < MaxMass)
             lock(this.Elements)
             while( nViruses < MaxViruses && mass < MaxMass )
             {

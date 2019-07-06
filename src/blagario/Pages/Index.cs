@@ -21,20 +21,28 @@ namespace blagario
         {
         }
 
-        protected List<AgarElement> UIList;
+        protected List<AgarElement> VisibleElements = new List<AgarElement>();
+
+        protected bool IsDirty = false;
 
         protected override void OnInit()
-        {
+        {      
+            Universe.World.OnTicReached += (a,b)=> Invoke( () =>{
+                IsDirty = true;
+            });   
+
             Invoke(
                 async () =>
                 {
                     while (true)
                     {
-                        lock(Universe.World.Elements) UIList = Universe.World.Elements.ToList();
                         await Task.Delay(17);
+                        if (! IsDirty) continue;
+                        VisibleElements = Universe.World.Elements.Where( e=> Eyeglass.OnArea(e) ).ToList();
                         StateHasChanged();                    
                     }
-                });           
+                });   
+
         }
         
         protected void TrackMouse(UIMouseEventArgs e)
