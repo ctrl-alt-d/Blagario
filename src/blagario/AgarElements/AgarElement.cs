@@ -19,7 +19,7 @@ namespace blagario.elements
         public ElementType ElementType {get; protected set; }
         public double X {set; get; }
         public double Y {set; get; }
-        protected double _Mass {set; get; }
+        public double _Mass {set; get; }
         public long Mass => (int)_Mass;
         public virtual async Task Tic() 
         { 
