@@ -43,16 +43,58 @@ namespace blagario.elements
         public override async Task Tic()
         {
             List<AgarElement> currentElements;
-            lock(this.Elements) currentElements = this.Elements.ToList();
-            CheckIfWoldNedsMoreViruses(currentElements);            
-            CheckIfWoldNedsMorePellets(currentElements);            
 
             lock(this.Elements) currentElements = this.Elements.ToList();
             foreach (var e in currentElements) await e.Tic();
 
+            var collisions = LocateCellPelletCollisions(currentElements);
+            lock(this.Elements) ResolveCellPelletCollitions(collisions);
+
+
+            lock(this.Elements) currentElements = this.Elements.ToList();
+            CheckIfWoldNedsMoreViruses(currentElements);            
+            CheckIfWoldNedsMorePellets(currentElements);            
+
+
             await base.Tic();
 
             OnTic( EventArgs.Empty );
+        }
+
+        private void ResolveCellPelletCollitions(List<( Cell cell, List<Pellet> pellets)> collisions)
+        {
+            foreach(var c in collisions)
+            {
+                var cell = c.cell;
+                foreach(var pellet in c.pellets)
+                {
+                    var removed = this.Elements.Remove(pellet);
+                    if (removed)
+                    {
+                        cell._Mass += pellet._Mass;
+                    }
+                }
+            }
+        }
+
+        private List<( Cell cell, List<Pellet> pellets)> LocateCellPelletCollisions(List<AgarElement> currentElements)
+        {
+            List<( Cell cell, List<Pellet> pellets)> collision = new List<( Cell cell, List<Pellet> pellets)>();
+            var cells = this.Elements.Where(e=>e.ElementType == ElementType.Cell).ToList();
+            var pellets = this.Elements.Where(e=>e.ElementType == ElementType.Pellet).ToList();
+            foreach( var currentElement in cells )
+            {
+                var p = pellets
+                .Where( otherElement => Math.Abs(otherElement.X - currentElement.X) < ( otherElement.Radius + currentElement.Radius ) )
+                .Where( otherElement => Math.Abs(otherElement.Y - currentElement.Y) < ( otherElement.Radius + currentElement.Radius ) )
+                .Select(x=>x as Pellet)
+                .ToList();
+                if (p.Any())
+                {
+                    collision.Add( (currentElement as Cell, p) );
+                }
+            }
+            return collision;
         }
 
         private void CheckIfWoldNedsMorePellets(List<AgarElement> currentElements)
