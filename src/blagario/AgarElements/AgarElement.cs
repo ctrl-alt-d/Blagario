@@ -25,17 +25,17 @@ namespace blagario.elements
         { 
             await Task.CompletedTask; 
         }        
-        public double Radius => Math.Sqrt( _Mass / Math.PI );
-        public double Diameter => Radius * 2;
+        public virtual double Radius => Math.Sqrt( _Mass / Math.PI );
+        public virtual double Diameter => Radius * 2;
         public long CssX => (long)(X-Radius);
         public long CssY => (long)(Y-Radius);
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
-        public virtual string CssStyle( Eyeglass c) => $@"
+        public virtual string CssStyle( Player c) => $@"
             top: {c.YGame2World(CssY).ToString()}px ;
             left: {c.XGame2World(CssX).ToString()}px ;
-            width: {(Diameter * c.Cell.Zoom).ToString()}px ;
-            height: {(Diameter * c.Cell.Zoom).ToString()}px ;
+            width: {(Diameter * c.Zoom).ToString()}px ;
+            height: {(Diameter * c.Zoom).ToString()}px ;
             ";
     }
 }

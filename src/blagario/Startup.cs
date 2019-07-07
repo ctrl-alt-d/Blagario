@@ -24,8 +24,7 @@ namespace blagario
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<Universe>();
-            services.AddScoped<Cell>(); 
-            services.AddScoped<Eyeglass>();
+            services.AddScoped<Player>();
             services.AddHostedService<TimedHostedService>();
         }
 
