@@ -35,6 +35,16 @@ namespace blagario.elements
         }
 
         /* --- */
+        public long XGame2World( double x )
+        {
+            return (long) ( x * Cell.Zoom);
+        }
+        public long YGame2World( double y )
+        {
+            return (long) (long) ( y * Cell.Zoom);
+        }
+
+        /* --- */
         public double XPysics2Game( long x )
         {
             var center_point = this.VisibleAreaX / 2;
@@ -45,6 +55,7 @@ namespace blagario.elements
 
         public bool OnArea(AgarElement e)
         {
+            if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
             var diameter = e.Diameter;
