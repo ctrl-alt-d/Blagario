@@ -20,7 +20,7 @@ namespace blagario.elements
         {
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero, 
-                TimeSpan.FromMilliseconds(17));
+                TimeSpan.FromMilliseconds(20));
 
             return Task.CompletedTask;
         }

@@ -11,7 +11,7 @@ namespace blagario.elements
         public List<AgarElement> Elements;
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
-        public const long MaxPellets = 1000;        
+        public const long MaxPellets = 10000;        
 
         public override string CssStyle( Eyeglass c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
@@ -108,7 +108,7 @@ namespace blagario.elements
                 var e = Pellet.CreatePellet(this.Universe);        
                 mass += e.Mass;        
                 nPellets++;
-            }            
+            }      
         }
 
         private void CheckIfWoldNedsMoreViruses(List<AgarElement> currentElements)
