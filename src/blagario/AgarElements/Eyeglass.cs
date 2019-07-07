@@ -45,6 +45,7 @@ namespace blagario.elements
 
         public bool OnArea(AgarElement e)
         {
+            if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
             var diameter = e.Diameter;

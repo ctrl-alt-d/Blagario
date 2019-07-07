@@ -36,7 +36,7 @@ namespace blagario
                 {
                     while (true)
                     {
-                        await Task.Delay(17);
+                        await Task.Delay(20);
                         if (! IsDirty) continue;
                         VisibleElements = Universe.World.Elements.Where( e=> Eyeglass.OnArea(e) ).ToList();
                         StateHasChanged();                    

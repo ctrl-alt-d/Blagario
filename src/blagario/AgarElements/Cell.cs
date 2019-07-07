@@ -17,13 +17,13 @@ namespace blagario.elements
             MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
         }
 
-        public override double Vel => 0.5;
+        public override double Vel => 0.2;
         public int Zoom { set; get; } = 8;
 
         public string MyColor;
 
         public override async Task Tic() {
-            _Mass = _Mass ; //TODO: * 0.999;
+            _Mass = _Mass * 0.999;
             if (_Mass<10) _Mass = 10;
             await base.Tic();
         }

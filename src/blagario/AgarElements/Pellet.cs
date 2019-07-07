@@ -13,7 +13,13 @@ namespace blagario.elements
             this.ElementType = ElementType.Pellet;
             this.X = x;
             this.Y = y;
+            MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
+
         }
+        static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
+        public string MyColor;
+        public override string CssStyle(Eyeglass c) => base.CssStyle(c) + $" background-color: #{MyColor}";
+
 
         internal static Pellet CreatePellet(Universe universe)
         {
