@@ -35,6 +35,16 @@ namespace blagario.elements
         }
 
         /* --- */
+        public long XGame2World( double x )
+        {
+            return (long) ( x * Cell.Zoom);
+        }
+        public long YGame2World( double y )
+        {
+            return (long) (long) ( y * Cell.Zoom);
+        }
+
+        /* --- */
         public double XPysics2Game( long x )
         {
             var center_point = this.VisibleAreaX / 2;

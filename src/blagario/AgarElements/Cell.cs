@@ -30,7 +30,12 @@ namespace blagario.elements
 
         static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
 
-        public override string CssStyle(Eyeglass c) => base.CssStyle(c) + $" background-color: #{MyColor}";
+        public override string CssStyle(Eyeglass c) => $@"
+            top: {((long)(-this.Radius*this.Zoom + c.VisibleAreaY/2)).ToString()}px ;
+            left: {((long)(-this.Radius*this.Zoom + c.VisibleAreaX/2)).ToString()}px ;
+            width: {(Diameter * this.Zoom).ToString()}px ;
+            height: {(Diameter * this.Zoom).ToString()}px ;
+            background-color: #{MyColor}";
 
         public override void PointTo( double x, double y )
         {

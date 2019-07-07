@@ -17,19 +17,12 @@ namespace blagario
         [Inject] protected IJSRuntime JsRuntime  {get; set; }
 
         private bool Rendered = false;
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         protected List<AgarElement> VisibleElements = new List<AgarElement>();
 
-        protected bool IsDirty = false;
-
         protected override void OnInit()
         {      
-            Universe.World.OnTicReached += (a,b)=> Invoke( () =>{
-                IsDirty = true;
-            });   
 
             Invoke(
                 async () =>
@@ -37,12 +30,14 @@ namespace blagario
                     while (true)
                     {
                         await Task.Delay(20);
-                        if (! IsDirty) continue;
-                        VisibleElements = Universe.World.Elements.Where( e=> Eyeglass.OnArea(e) ).ToList();
+                        VisibleElements = Universe
+                            .World
+                            .Elements
+                            .Where( e=> Eyeglass.OnArea(e) )
+                            .ToList();
                         StateHasChanged();                    
                     }
                 });   
-
         }
         
         protected void TrackMouse(UIMouseEventArgs e)

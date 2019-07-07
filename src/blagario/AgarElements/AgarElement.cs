@@ -32,8 +32,8 @@ namespace blagario.elements
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
         public virtual string CssStyle( Eyeglass c) => $@"
-            top: {c.YGame2Physics(CssY).ToString()}px ;
-            left: {c.XGame2Physics(CssX).ToString()}px ;
+            top: {c.YGame2World(CssY).ToString()}px ;
+            left: {c.XGame2World(CssX).ToString()}px ;
             width: {(Diameter * c.Cell.Zoom).ToString()}px ;
             height: {(Diameter * c.Cell.Zoom).ToString()}px ;
             ";
