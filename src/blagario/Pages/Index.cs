@@ -16,27 +16,28 @@ namespace blagario
         [Inject] protected IJSRuntime JsRuntime  {get; set; }
 
         private bool Rendered = false;
-        public void Dispose() { }
-
+        public void Dispose() { 
+            Universe.World.OnTicReached -= UpdateUi;
+        }
+        
         protected List<AgarElement> VisibleElements = new List<AgarElement>();
 
         protected override void OnInit()
         {      
-
+            Universe.World.OnTicReached += UpdateUi;
+        }
+        private void UpdateUi(object sender, EventArgs ea)
+        {
             Invoke(
-                async () =>
+                () =>
                 {
-                    while (true)
-                    {
-                        await Task.Delay(20);
-                        VisibleElements = Universe
-                            .World
-                            .Elements
-                            .Where( e=> Player.OnArea(e) )
-                            .ToList();
-                        StateHasChanged();                    
-                    }
-                });   
+                    VisibleElements = Universe
+                        .World
+                        .Elements
+                        .Where( e=> Player.OnArea(e) )
+                        .ToList();
+                    StateHasChanged();                    
+                });
         }
         
         protected void TrackMouse(UIMouseEventArgs e)
