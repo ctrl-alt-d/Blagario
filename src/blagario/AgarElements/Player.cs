@@ -79,11 +79,11 @@ namespace blagario.elements
             if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
-            var diameter = e.Diameter;
-            if (this.XGame2Physics(e.X) < 0 - diameter ) return false;
-            if (this.XGame2Physics(e.X) > ( this.VisibleAreaX + diameter) ) return false;
-            if (this.YGame2Physics(e.Y) < 0 - diameter ) return false;
-            if (this.YGame2Physics(e.Y) > ( this.VisibleAreaY + diameter ) ) return false;
+            var nTimesTheDiameter = Math.Max( Cell.Diameter * 5, 30);
+            if (Cell.X - e.X + e.Radius > nTimesTheDiameter ) return false;
+            if (e.X - e.Radius - Cell.X > nTimesTheDiameter ) return false;
+            if (Cell.Y - e.Y + e.Radius > nTimesTheDiameter ) return false;
+            if (e.Y - e.Radius - Cell.Y > nTimesTheDiameter ) return false;
             return true;
         }
 
