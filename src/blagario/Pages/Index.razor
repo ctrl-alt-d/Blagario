@@ -3,18 +3,23 @@
 
 <div 
     class="universe" 
-    style="@Universe.CssStyle(Eyeglass)"
+    style="@Universe.CssStyle(Player)"
     @onmousemove="@TrackMouse"
 >
     <div 
         class="world" 
-        style="@Universe.World.CssStyle(Eyeglass)"
+        style="@Universe.World.CssStyle(Player)"
     >
         @foreach (var element in VisibleElements )
         {
             <div class="@element.CssClass"
-                style="@element.CssStyle(Eyeglass)">
+                style="@element.CssStyle(Player)">
             </div>
         }
     </div>
+
+    <div class="scoreboard">
+        <span style="color:green;">#BLAGARIO</span>
+    </div>
+
 </div>

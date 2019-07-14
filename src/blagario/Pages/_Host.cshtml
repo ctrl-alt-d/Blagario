@@ -20,7 +20,8 @@
 
         window.AreaResized = (DotNetRef) =>
         {
-            window.addEventListener("resize", () => {DotNetRef.invokeMethodAsync('OnBrowserResize').then(data => data);} );
+            window.addEventListener("resize", 
+                () => {DotNetRef.invokeMethodAsync('OnBrowserResize').then(data => data);} );
             
         }
 

@@ -13,11 +13,11 @@ namespace blagario.elements
         public const long MaxViruses = 100;        
         public const long MaxPellets = 10000;        
 
-        public override string CssStyle( Eyeglass c ) =>$@"
+        public override string CssStyle( Player c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
             left: {c.XGame2Physics(0)}px;
-            width: {(X * c.Cell.Zoom).ToString()}px ;
-            height: {(Y * c.Cell.Zoom).ToString()}px ; 
+            width: {(X * c.Zoom).ToString()}px ;
+            height: {(Y * c.Zoom).ToString()}px ; 
             "; 
 
         public World(Universe universe)

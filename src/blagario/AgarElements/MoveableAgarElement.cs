@@ -12,8 +12,29 @@ namespace blagario.elements
 
         public virtual void PointTo( double x, double y )
         {            
-            this.Vx =  this.Vel * (x-this.X<0?-1.0:1.0);
-            this.Vy =  this.Vel * (y-this.Y<0?-1.0:1.0);
+
+            /*              o <---mouse (x,y)
+                           /|
+                          / |
+                         /  |dy
+                    Vx  /   |
+                    ---o <--- new point
+                    | /|    |
+                    |/ | Vy | 
+            cell--->o----------------
+                    |---dx--|
+
+            */
+
+            var dx = x - this.X;
+            var dy = y - this.Y;
+            var d = Math.Sqrt( dx*dx + dy*dy );
+            var sinAlf = dy / d;
+            var cosAlf = dx / d;
+
+            this.Vy = this.Vel * sinAlf;
+            this.Vx = this.Vel * cosAlf;
+
         }
 
         public override async Task  Tic() {

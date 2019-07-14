@@ -5,30 +5,38 @@ using Microsoft.JSInterop;
 
 namespace blagario.elements
 {
-    public class Eyeglass
+    public class Player
     {
-        public Eyeglass( Cell cell)
+        public Universe Universe;
+        public Player(Universe universe)
         {
-            Cell = cell;
+            Universe = universe;
+            Cell = new Cell(universe);
         }
+
+        public Cell Cell {get; private set;}
+
+        public double CurrentX => Cell!=null?Cell.X:(Universe.X/2);
+        public double CurrentY => Cell!=null?Cell.Y:(Universe.Y/2);
 
         /* --- */
         public IJSRuntime JsRuntime {get; private set;}
-        public Cell Cell {get; private set;}
         public long VisibleAreaX { set; get; } 
         public long VisibleAreaY { set; get; } 
+
+        public int Zoom { set; get; } = 8;
 
         /* --- */
         public long XGame2Physics( double x )
         {
-            var distance_to_cell = ( x - Cell.X ) * Cell.Zoom;
+            var distance_to_cell = ( x - CurrentX ) * this.Zoom;
             var center_point = this.VisibleAreaX / 2;
             var distance_to_center_point = center_point + distance_to_cell;
             return (long) distance_to_center_point;
         }
         public long YGame2Physics( double y )
         {
-            var distance_to_cell = ( y - Cell.Y ) * Cell.Zoom;
+            var distance_to_cell = ( y - CurrentY ) * this.Zoom;
             var center_point = this.VisibleAreaY / 2;
             var distance_to_center_point = center_point + distance_to_cell;
             return (long) distance_to_center_point;
@@ -37,19 +45,32 @@ namespace blagario.elements
         /* --- */
         public long XGame2World( double x )
         {
-            return (long) ( x * Cell.Zoom);
+            return (long) ( x * this.Zoom);
         }
         public long YGame2World( double y )
         {
-            return (long) (long) ( y * Cell.Zoom);
+            return (long) (long) ( y * this.Zoom);
+        }
+
+        internal void PointTo(double bx, double by)
+        {
+            Cell.PointTo(bx, by);
         }
 
         /* --- */
         public double XPysics2Game( long x )
         {
             var center_point = this.VisibleAreaX / 2;
-            var distance_to_center_point = (x - center_point) / Cell.Zoom;
-            var position = Cell.X + distance_to_center_point;
+            var distance_to_center_point = (x - center_point) / this.Zoom;
+            var position = CurrentX + distance_to_center_point;
+            return position;
+        }
+
+        public double YPysics2Game( long y )
+        {
+            var center_point = this.VisibleAreaY / 2;
+            var distance_to_center_point = (y - center_point) / this.Zoom;
+            var position = CurrentY + distance_to_center_point;
             return position;
         }
 
@@ -58,20 +79,12 @@ namespace blagario.elements
             if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
-            var diameter = e.Diameter;
-            if (this.XGame2Physics(e.X) < 0 - diameter ) return false;
-            if (this.XGame2Physics(e.X) > ( this.VisibleAreaX + diameter) ) return false;
-            if (this.YGame2Physics(e.Y) < 0 - diameter ) return false;
-            if (this.YGame2Physics(e.Y) > ( this.VisibleAreaY + diameter ) ) return false;
+            var nTimesTheDiameter = Math.Max( Cell.Diameter * 5, 30);
+            if (Cell.X - e.X + e.Radius > nTimesTheDiameter ) return false;
+            if (e.X - e.Radius - Cell.X > nTimesTheDiameter ) return false;
+            if (Cell.Y - e.Y + e.Radius > nTimesTheDiameter ) return false;
+            if (e.Y - e.Radius - Cell.Y > nTimesTheDiameter ) return false;
             return true;
-        }
-
-        public double YPysics2Game( long y )
-        {
-            var center_point = this.VisibleAreaY / 2;
-            var distance_to_center_point = (y - center_point) / Cell.Zoom;
-            var position = Cell.Y + distance_to_center_point;
-            return position;
         }
 
         /* --- */

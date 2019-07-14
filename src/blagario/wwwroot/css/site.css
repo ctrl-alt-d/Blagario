@@ -10,6 +10,18 @@ html, body {
     border: 0;
 }
 
+.scoreboard {
+    position: fixed;
+    background-color: black;    
+    margin: 0;
+    padding: 0;
+    border: 1px solid red;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 40px;
+}
+
 .world {
     position: fixed;
     background-color: black;    

@@ -5,25 +5,47 @@ using Microsoft.Extensions.Hosting;
 
 namespace blagario.elements
 {
+    public static class TaskExtensions
+    {
+        public static void DoNotAwait(this Task task) { }
+    }
 
     internal class TimedHostedService : IHostedService, IDisposable
     {
-        private Timer _timer;
+        //private Timer _timer;
         private World World;
+
+        public bool IsRunning {get; private set;}
+        const int fps = 60;
+        const int millisecondsdelay = 1000 / fps;
 
         public TimedHostedService(Universe universe)
         {
             World = universe.World;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
+            IsRunning = true;
+            //_timer = new Timer(DoWork, null, TimeSpan.Zero, 
+            //    TimeSpan.FromMilliseconds(20));
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, 
-                TimeSpan.FromMilliseconds(20));
+            Task.Run( async () => {
+                while (IsRunning)
+                {
+                    System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+                    stopWatch.Start();
+                    await World.Tic();
+                    stopWatch.Stop();
+                    var d = millisecondsdelay - stopWatch.Elapsed.Milliseconds;
+                    if (d<=1) d = 1;
+                    await Task.Delay(d);
+                }
+            }).DoNotAwait();
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
+
 
         private async void DoWork(object state)
         {
@@ -32,13 +54,14 @@ namespace blagario.elements
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Change(Timeout.Infinite, 0);
+            IsRunning = false;
+            //_timer?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
+            //_timer?.Dispose();
         }
     }
 }
