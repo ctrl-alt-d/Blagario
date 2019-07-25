@@ -42,8 +42,8 @@ namespace blagario
         
         protected void TrackMouse(UIMouseEventArgs e)
         {
-            var bx = Player.XPysics2Game(e.ClientX);
-            var by = Player.YPysics2Game(e.ClientY);
+            var bx = Player.XPysics2Game((long)e.ClientX);
+            var by = Player.YPysics2Game((long)e.ClientY);
             Player.PointTo( bx, by);
         }
 
