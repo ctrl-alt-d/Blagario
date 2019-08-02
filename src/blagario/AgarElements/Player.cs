@@ -5,14 +5,17 @@ using Microsoft.JSInterop;
 
 namespace blagario.elements
 {
-    public class Player
+    public class Player: IDisposable
     {
         public Universe Universe;
         public Player(Universe universe)
         {
             Universe = universe;
             Cell = new Cell(universe);
+            Universe.World.OnTicReached += OnTicEvent;
         }
+
+        private void OnTicEvent(object o, EventArgs e) => this.Tic();
 
         public Cell Cell {get; private set;}
 
@@ -24,7 +27,8 @@ namespace blagario.elements
         public long VisibleAreaX { set; get; } 
         public long VisibleAreaY { set; get; } 
 
-        public int Zoom { set; get; } = 8;
+        public float Zoom { set; get; } = 8;
+        private float DeltaZoom = 0;
 
         /* --- */
         public long XGame2Physics( double x )
@@ -52,9 +56,34 @@ namespace blagario.elements
             return (long) (long) ( y * this.Zoom);
         }
 
+        internal void IncreaseZoom(float v)
+        {
+            DeltaZoom += v;
+        }
+
         internal void PointTo(double bx, double by)
         {
             Cell.PointTo(bx, by);
+        }
+
+        public void Tic()
+        {
+            if (DeltaZoom<0 && Zoom<0.5)
+            {
+                DeltaZoom=0;
+            }
+
+            if (DeltaZoom>0 && Zoom>9)
+            {
+                DeltaZoom=0;
+            }
+
+            if (DeltaZoom != 0)
+            {
+                var d = DeltaZoom / 20;
+                DeltaZoom -= d;
+                Zoom += d;
+            }
         }
 
         /* --- */
@@ -135,6 +164,11 @@ namespace blagario.elements
                     value.Dispose();
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            Universe.World.OnTicReached -= OnTicEvent;            
         }
 
         #endregion
