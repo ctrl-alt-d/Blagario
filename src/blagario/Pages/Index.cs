@@ -47,6 +47,11 @@ namespace blagario
             Player.PointTo( bx, by);
         }
 
+        protected void MouseWheel(UIWheelEventArgs e)
+        {
+            Player.IncreaseZoom( - (float)(e.DeltaY/100.0) );
+        }
+
         protected async override Task OnAfterRenderAsync()
         {
             if (!Rendered) 

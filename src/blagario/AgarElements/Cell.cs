@@ -22,7 +22,7 @@ namespace blagario.elements
         public string MyColor;
 
         public override async Task Tic() {
-            _Mass = _Mass * 0.999;
+            _Mass = _Mass * 0.9995;
             if (_Mass<10) _Mass = 10;
             await base.Tic();
         }
