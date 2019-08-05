@@ -25,19 +25,9 @@ namespace blagario.elements
         { 
             await Task.CompletedTask; 
         }        
-        public virtual double Radius => GetRadiusFromMass(this.Mass);
+        public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
 
-        private static double?[] RadiusFromMassCache = new double?[20000];
-        private double GetRadiusFromMass(long mass)
-        {
-            var r = RadiusFromMassCache[mass];
-            if (r==null)
-            {
-                r = Math.Sqrt( mass / Math.PI );
-                RadiusFromMassCache[mass] = r;
-            }
-            return r.Value;
-        }
+
 
         public virtual double Diameter => Radius * 2;
         public long CssX => (long)(X-Radius);
