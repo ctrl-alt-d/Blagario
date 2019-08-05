@@ -16,8 +16,8 @@ namespace blagario.elements
         public override string CssStyle( Player c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
             left: {c.XGame2Physics(0)}px;
-            width: {(X * c.Zoom).ToString()}px ;
-            height: {(Y * c.Zoom).ToString()}px ; 
+            width: {((long)(X * c.Zoom)).ToString()}px ;
+            height: {((long)(Y * c.Zoom)).ToString()}px ; 
             "; 
 
         public World(Universe universe)
@@ -62,46 +62,44 @@ namespace blagario.elements
 
         private void ResolveCollitions(List<( AgarElement eater, List<AgarElement> eateds)> collisions)
         {
-            foreach(var c in collisions)
-            {
-                foreach(var eated in c.eateds)
+            foreach(var (eater, eateds) in collisions)
+                foreach(var eated in eateds)
                 {
-                    if (c.eater._Mass * 0.9 > eated._Mass && eated._Mass != 0)
-                    {
-                        ResolveEat( c.eater, eated);
-                    }
+                    if (eated._Mass == 0) continue;
+                    var t = (eater.ElementType, eated.ElementType );
+                    var _ = 
+                        t == (ElementType.Cell, ElementType.Pellet)?ResolveEatElements( eater as Cell, eated as Pellet):
+                        t == (ElementType.Cell, ElementType.Cell)?ResolveEatElements( eater as Cell, eated as Cell):
+                        t == (ElementType.Cell, ElementType.Virus)?ResolveEatElements( eater as Cell, eated as Virus):
+                        0;
                 }
-            }
             var removed = this.Elements.RemoveAll(e=>e._Mass == 0);
-
-        }
-        private void ResolveEat(AgarElement eater, AgarElement eated)
-        {
-            // Combinations:
-            ResolveEatElements( eater as Cell, eated as Pellet);
-            ResolveEatElements( eater as Cell, eated as Cell);
-            ResolveEatElements( eater as Cell, eated as Virus);            
         }
 
-        private void ResolveEatElements(Cell eater, Pellet eated)
+        private int ResolveEatElements(Cell eater, Pellet eated)
         {
-            if (eater == null || eated == null) return;
             eater._Mass += eated._Mass;
             eated._Mass = 0;
+            return 1;
         }
-        private void ResolveEatElements(Cell eater, Cell eated)
+        private int ResolveEatElements(Cell eater, Cell eated)
         {
+            return 1;
         }
-        private void ResolveEatElements(Cell eater, Virus eated)
+        private int ResolveEatElements(Cell eater, Virus eated)
         {
+            return 1;
         }
         
         private List<( AgarElement eater, List<AgarElement> eateds)> LocateCollisions(List<AgarElement> currentElements)
         {
             List<( AgarElement eater, List<AgarElement> eateds)> collision = new List<( AgarElement eater, List<AgarElement> eateds)>();
 
-            var elements = currentElements.Select( (e,i) => new {e,i} ).ToList();
-            var cells = elements.Where(x=>x.e.ElementType == ElementType.Cell).ToList();
+            var cells = 
+                currentElements
+                .Select( (e,i) => new {e,i} )
+                .Where(x=>x.e.ElementType == ElementType.Cell)
+                .ToList();
 
             foreach( var currentElement in cells )
             {
@@ -109,9 +107,10 @@ namespace blagario.elements
 
                 var p = currentElements
                 .Skip( currentElement.i )
-                .Where( otherElement => ninetingPercentMass> otherElement._Mass)
-                .Where( otherElement => Math.Abs(otherElement.X - currentElement.e.X) < ( otherElement.Radius + currentElement.e.Radius ) )
-                .Where( otherElement => Math.Abs(otherElement.Y - currentElement.e.Y) < ( otherElement.Radius + currentElement.e.Radius ) )
+                .Where( otherElement => 
+                    ninetingPercentMass> otherElement._Mass &&
+                    Math.Abs(otherElement.X - currentElement.e.X) < ( otherElement.Radius + currentElement.e.Radius ) &&
+                    Math.Abs(otherElement.Y - currentElement.e.Y) < ( otherElement.Radius + currentElement.e.Radius ) )
                 .ToList<AgarElement>();
 
                 if (p.Any())

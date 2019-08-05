@@ -7,7 +7,7 @@ namespace blagario.elements
         public Cell(Universe universe)
         {
             this.Universe = universe;
-            this._Mass = 42; //ToDo: move to 17 some day.
+            this._Mass = 542; //ToDo: move to 17 some day.
             this.ElementType = ElementType.Cell;
             var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
             var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
@@ -34,8 +34,8 @@ namespace blagario.elements
             ?$@"
             top: {((long)(-this.Radius*c.Zoom + c.VisibleAreaY/2)).ToString()}px ;
             left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;
-            width: {(Diameter * c.Zoom).ToString()}px ;
-            height: {(Diameter * c.Zoom).ToString()}px ;
+            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
+            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
             background-color: #{MyColor}"
             :base.CssStyle(c)
             +$@"position: absolute;
