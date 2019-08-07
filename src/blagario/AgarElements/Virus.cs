@@ -25,10 +25,5 @@ namespace blagario.elements
             return v;
         }
 
-        public override async Task Tic()
-        {
-            await base.Tic();
-        }
-
     }
 }
