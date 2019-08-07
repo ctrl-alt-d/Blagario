@@ -45,7 +45,7 @@ namespace blagario.elements
         {
             List<AgarElement> currentElements;
 
-            lock(this.Elements) currentElements = this.Elements.OrderByDescending(e=>e._Mass).ToList();
+            lock(this.Elements) currentElements = this.Elements.OrderBy(e=>e._Mass).ToList();
             foreach (var e in currentElements) await e.Tic(fpsTicNum);
 
             if (fpsTicNum % (TimedHostedService.fps/3) == 0)  // 3 times per second
@@ -91,7 +91,7 @@ namespace blagario.elements
             foreach( var currentElement in cells )
             {
                 var p = currentElements
-                .Skip( currentElement.i )
+                .Take( currentElement.i )
                 .Where( otherElement => 
                         ElementsHelper.CanOneElementEatsOtherOneByMass( currentElement.e, otherElement ) &&
                         ElementsHelper.CanOneElementEatsOtherOneByDistance( currentElement.e, otherElement ) )
