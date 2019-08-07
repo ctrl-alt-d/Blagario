@@ -9,21 +9,22 @@ namespace blagario.elements
     public class World : AgarElement
     {
         public List<AgarElement> Elements;
+        public const double WorldSize = 1000; 
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
-        public const long MaxPellets = 10000;        
+        public const long MaxPellets = 1000;        
 
         public override string CssStyle( Player c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
             left: {c.XGame2Physics(0)}px;
-            width: {(X * c.Zoom).ToString()}px ;
-            height: {(Y * c.Zoom).ToString()}px ; 
+            width: {((long)(X * c.Zoom)).ToString()}px ;
+            height: {((long)(Y * c.Zoom)).ToString()}px ; 
             "; 
 
         public World(Universe universe)
         {
-            this.X = 1000;
-            this.Y = 1000;
+            this.X = WorldSize;
+            this.Y = WorldSize;
             Elements = new List<AgarElement>();
             Universe = universe;
         }
@@ -40,63 +41,106 @@ namespace blagario.elements
             EventHandler handler = OnTicReached;
             handler?.Invoke(this, e);
         }
-        public override async Task Tic()
+        public override async Task Tic(int fpsTicNum)
         {
             List<AgarElement> currentElements;
 
-            lock(this.Elements) currentElements = this.Elements.ToList();
-            foreach (var e in currentElements) await e.Tic();
+            lock(this.Elements) currentElements = this.Elements.OrderBy(e=>e._Mass).ToList();
+            foreach (var e in currentElements) await e.Tic(fpsTicNum);
 
-            var collisions = LocateCellPelletCollisions(currentElements);
-            lock(this.Elements) ResolveCellPelletCollitions(collisions);
+            if (fpsTicNum % (TimedHostedService.fps/3) == 0)  // 3 times per second
+            {
+                ManageCollitions(currentElements);
+            }
 
+            if ( (fpsTicNum+5) % TimedHostedService.fps == 0) // 1 time per second
+            {
+                currentElements = FillWorld();
+            }
 
-            lock(this.Elements) currentElements = this.Elements.ToList();
-            CheckIfWoldNedsMoreViruses(currentElements);            
-            CheckIfWoldNedsMorePellets(currentElements);            
-
-
-            await base.Tic();
+            await base.Tic(fpsTicNum);
 
             OnTic( EventArgs.Empty );
         }
 
-        private void ResolveCellPelletCollitions(List<( Cell cell, List<Pellet> pellets)> collisions)
+        private List<AgarElement> FillWorld()
         {
-            foreach(var c in collisions)
-            {
-                var cell = c.cell;
-                foreach(var pellet in c.pellets)
-                {
-                    var removed = this.Elements.Remove(pellet);
-                    if (removed)
-                    {
-                        cell._Mass += pellet._Mass;
-                    }
-                }
-            }
+            List<AgarElement> currentElements;
+            lock (this.Elements) currentElements = this.Elements.ToList();
+            CheckIfWoldNedsMoreViruses(currentElements);
+            CheckIfWoldNedsMorePellets(currentElements);
+            return currentElements;
         }
 
-        private List<( Cell cell, List<Pellet> pellets)> LocateCellPelletCollisions(List<AgarElement> currentElements)
+        private void ManageCollitions(List<AgarElement> currentElements)
         {
-            List<( Cell cell, List<Pellet> pellets)> collision = new List<( Cell cell, List<Pellet> pellets)>();
-            var cells = this.Elements.Where(e=>e.ElementType == ElementType.Cell).ToList();
-            var pellets = this.Elements.Where(e=>e.ElementType == ElementType.Pellet).ToList();
+            var collisions = LocateCollisions(currentElements);
+            lock (this.Elements) ResolveCollitions(collisions);
+        }
+
+        private List<( AgarElement eater, List<AgarElement> eateds)> LocateCollisions(List<AgarElement> currentElements)
+        {
+            List<( AgarElement eater, List<AgarElement> eateds)> collision = new List<( AgarElement eater, List<AgarElement> eateds)>();
+
+            var cells = 
+                currentElements
+                .Select( (e,i) => new {e,i} )
+                .Where(x=>x.e.ElementType == ElementType.Cell)
+                .ToList();
+
             foreach( var currentElement in cells )
             {
-                var p = pellets
-                .Where( otherElement => Math.Abs(otherElement.X - currentElement.X) < ( otherElement.Radius + currentElement.Radius ) )
-                .Where( otherElement => Math.Abs(otherElement.Y - currentElement.Y) < ( otherElement.Radius + currentElement.Radius ) )
-                .Select(x=>x as Pellet)
-                .ToList();
+                var p = currentElements
+                .Take( currentElement.i )
+                .Where( otherElement => 
+                        ElementsHelper.CanOneElementEatsOtherOneByMass( currentElement.e, otherElement ) &&
+                        ElementsHelper.CanOneElementEatsOtherOneByDistance( currentElement.e, otherElement ) )
+                .ToList<AgarElement>();
+
                 if (p.Any())
                 {
-                    collision.Add( (currentElement as Cell, p) );
+                    collision.Add( (currentElement.e, p) );
                 }
             }
             return collision;
         }
 
+        private void ResolveCollitions(List<( AgarElement eater, List<AgarElement> eateds)> collisions)
+        {
+            foreach(var (eater, eateds) in collisions)
+                foreach(var eated in eateds)
+                {
+                    if (eated._Mass == 0) continue;
+                    var t = (eater.ElementType, eated.ElementType );
+                    var _ = 
+                        t == (ElementType.Cell, ElementType.Pellet)?ResolveEatElements( eater as Cell, eated as Pellet):
+                        t == (ElementType.Cell, ElementType.Cell)?ResolveEatElements( eater as Cell, eated as Cell):
+                        t == (ElementType.Cell, ElementType.Virus)?ResolveEatElements( eater as Cell, eated as Virus):
+                        0;
+                }
+            var removed = this.Elements.RemoveAll(e=>e._Mass == 0);
+        }
+
+        private int ResolveEatElements(Cell eater, Pellet eated)
+        {
+            eater._EatedMass += eated._Mass;
+            eated._Mass = 0;
+            return 1;
+        }
+        private int ResolveEatElements(Cell eater, Cell eated)
+        {
+            eater._EatedMass += eated._Mass;
+            eated._Mass = 0;
+            return 1;
+        }
+        private int ResolveEatElements(Cell eater, Virus eated)
+        {
+            eater._EatedMass += eated._Mass;
+            eated._Mass = 0;
+            return 1;
+        }
+
+        
         private void CheckIfWoldNedsMorePellets(List<AgarElement> currentElements)
         {
             var nPellets = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();

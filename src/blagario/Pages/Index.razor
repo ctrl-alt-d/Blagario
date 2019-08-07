@@ -17,6 +17,15 @@
                 style="@element.CssStyle(Player)">
             </div>
         }
+
+        @if ( Player.Cell == null )
+        {
+            <div style="@Player.FormCss">
+            <input type="text" style="position:absolute; top:0; left:-100px; width: 350px;" bind-value="Player.Name">
+            <input type="button" style="position:absolute; top:0; left:-150px; width:50px;" value="Play!" onclick="@Player.Play">
+            </div>
+        }
+
     </div>
 
     <div class="scoreboard">
