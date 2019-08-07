@@ -69,3 +69,24 @@ html, body {
     padding: 0;
     border: 0;
 }
+
+.leaderboard {    
+    position: fixed;
+    background-color: black;    
+    margin: 0;
+    padding: 0;
+    border: 1px solid red;
+    width: 200px;
+    top: 10px;
+    right: 10px;
+    height: 300px;
+}
+
+.leaderboard ul {
+    padding: 14px;
+    margin: 0;
+    color: white;
+}
+
+
+

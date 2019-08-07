@@ -33,6 +33,8 @@ namespace blagario.elements
         public IEnumerable<Virus> Viruses => Elements.Where(x => x.ElementType == ElementType.Virus ).Select(x=>x as Virus);
         public IEnumerable<Pellet> Pellets => Elements.Where(x => x.ElementType == ElementType.Pellet ).Select(x=>x as Pellet);
 
+        public IEnumerable<Cell> Leaderboard => Elements.Where(x => x.ElementType == ElementType.Cell ).Select(x=> x as Cell).OrderByDescending(x => x._Mass ).Take(10);
+
 
         public event EventHandler OnTicReached;
 

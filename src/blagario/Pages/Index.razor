@@ -21,8 +21,8 @@
         @if ( Player.Cell == null )
         {
             <div style="@Player.FormCss">
-            <input type="text" style="position:absolute; top:0; left:-100px; width: 350px;" bind-value="Player.Name">
-            <input type="button" style="position:absolute; top:0; left:-150px; width:50px;" value="Play!" onclick="@Player.Play">
+            <input type="text" style="position:absolute; top:0; left:-100px; width: 350px;" @bind-value="@Player.Name" />
+            <input type="button" style="position:absolute; top:0; left:-150px; width:50px;" value="Play!" onclick="@Player.Play" />
             </div>
         }
 
@@ -30,6 +30,15 @@
 
     <div class="scoreboard">
         <span style="color:green;">#BLAGARIO</span>
+    </div>
+
+    <div class="leaderboard">
+        <ul>
+            @foreach( var cell in Universe.World.Leaderboard)
+            {
+                <li>@cell.Name @cell.Mass.ToString() </li>
+            }
+        </ul>
     </div>
 
 </div>
