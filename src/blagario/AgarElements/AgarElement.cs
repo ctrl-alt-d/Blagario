@@ -17,27 +17,26 @@ namespace blagario.elements
         protected static readonly Random getrandom = new Random();
 
         public ElementType ElementType {get; protected set; }
+        public string Name {get; set;} = "";
         public double X {set; get; }
         public double Y {set; get; }
         public double _Mass {set; get; }
+        public double _EatedMass {set; get; } = 0;
         public long Mass => (int)_Mass;
-        public virtual async Task Tic() 
+        public virtual async Task Tic(int fpsTicNum) 
         { 
+            double eat = 0;
+            if ( _EatedMass>0 ) 
+            {
+                eat = _Mass * 0.01;
+                eat = (eat>_EatedMass) ? _EatedMass : eat;
+            }
+
+            _EatedMass -= eat;
+            _Mass += eat;
             await Task.CompletedTask; 
         }        
-        public virtual double Radius => GetRadiusFromMass(this.Mass);
-
-        private static double?[] RadiusFromMassCache = new double?[20000];
-        private double GetRadiusFromMass(long mass)
-        {
-            var r = RadiusFromMassCache[mass];
-            if (r==null)
-            {
-                r = Math.Sqrt( mass / Math.PI );
-                RadiusFromMassCache[mass] = r;
-            }
-            return r.Value;
-        }
+        public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
 
         public virtual double Diameter => Radius * 2;
         public long CssX => (long)(X-Radius);
@@ -45,10 +44,10 @@ namespace blagario.elements
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
         public virtual string CssStyle( Player c) => $@"
-            top: {c.YGame2World(CssY).ToString()}px ;
-            left: {c.XGame2World(CssX).ToString()}px ;
-            width: {(Diameter * c.Zoom).ToString()}px ;
-            height: {(Diameter * c.Zoom).ToString()}px ;
+            top: {(c.YGame2World(CssY)).ToString()}px ;
+            left: {(c.XGame2World(CssX)).ToString()}px ;
+            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
+            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
             ";
     }
 }

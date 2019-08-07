@@ -37,7 +37,7 @@ namespace blagario.elements
 
         }
 
-        public override async Task  Tic() {
+        public override async Task  Tic(int fpsTicNum) {
             this.X += Vx;
             this.Y += Vy;
 
@@ -47,7 +47,7 @@ namespace blagario.elements
             this.X = this.X < 0?0:this.X;
             this.Y = this.Y < 0?0:this.Y;
 
-            await base.Tic();
+            await base.Tic(fpsTicNum);
         }
 
     }
