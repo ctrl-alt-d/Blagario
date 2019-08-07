@@ -29,6 +29,13 @@ namespace blagario.elements
 
         static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
 
+        private string pepaCss => Name=="Pepa"?$@"
+            background-image:url('https://i.imgur.com/ZUbWYDl.jpg');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;":
+            "background-color: #{MyColor}";
+
+            
         public override string CssStyle(Player c) => 
             c.Cell==null
             ?"visibility:none":
@@ -38,10 +45,7 @@ namespace blagario.elements
             left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;
             width: {((long)(Diameter * c.Zoom)).ToString()}px ;
             height: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            background-image:url('https://i.imgur.com/ZUbWYDl.jpg');
-            background-repeat: no-repeat;
-            background-size: 100% 100%;"
-            //background-color: #{MyColor}"
+            {pepaCss}"
             :base.CssStyle(c)
             +$@"position: absolute;
             background-color: #{MyColor};";

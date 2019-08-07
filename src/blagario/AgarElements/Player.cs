@@ -20,11 +20,11 @@ namespace blagario.elements
             right: {XGame2World(CurrentY)}px;
             ";
 
-        public string Name {set; get;} = "Unnamed cell";
+        public string Name {set; get;} 
         public void Play()
         {
             Cell = new Cell(Universe);
-            Cell.Name = Name;
+            Cell.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
         }
 
         private void OnTicEvent(object o, EventArgs e) => this.Tic();
