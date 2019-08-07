@@ -25,19 +25,9 @@ namespace blagario.elements
         { 
             await Task.CompletedTask; 
         }        
-        public virtual double Radius => GetRadiusFromMass(this.Mass);
+        public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
 
-        private static double?[] RadiusFromMassCache = new double?[20000];
-        private double GetRadiusFromMass(long mass)
-        {
-            var r = RadiusFromMassCache[mass];
-            if (r==null)
-            {
-                r = Math.Sqrt( mass / Math.PI );
-                RadiusFromMassCache[mass] = r;
-            }
-            return r.Value;
-        }
+
 
         public virtual double Diameter => Radius * 2;
         public long CssX => (long)(X-Radius);
@@ -45,10 +35,10 @@ namespace blagario.elements
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
         public virtual string CssStyle( Player c) => $@"
-            top: {c.YGame2World(CssY).ToString()}px ;
-            left: {c.XGame2World(CssX).ToString()}px ;
-            width: {(Diameter * c.Zoom).ToString()}px ;
-            height: {(Diameter * c.Zoom).ToString()}px ;
+            top: {(c.YGame2World(CssY)).ToString()}px ;
+            left: {(c.XGame2World(CssX)).ToString()}px ;
+            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
+            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
             ";
     }
 }
