@@ -17,6 +17,7 @@ namespace blagario.elements
         protected static readonly Random getrandom = new Random();
 
         public ElementType ElementType {get; protected set; }
+        public string Name {get; set;} = "";
         public double X {set; get; }
         public double Y {set; get; }
         public double _Mass {set; get; }

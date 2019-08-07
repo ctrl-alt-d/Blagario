@@ -11,16 +11,28 @@ namespace blagario.elements
         public Player(Universe universe)
         {
             Universe = universe;
-            Cell = new Cell(universe);
+            Cell = null ; //new Cell(universe);
             Universe.World.OnTicReached += OnTicEvent;
+        }
+        public string FormCss => $@"
+            position: absolute;
+            top: {XGame2World(CurrentX)}px;
+            right: {XGame2World(CurrentY)}px;
+            ";
+
+        public string Name {set; get;} = "Unnamed cell";
+        public void Play()
+        {
+            Cell = new Cell(Universe);
+            Cell.Name = Name;
         }
 
         private void OnTicEvent(object o, EventArgs e) => this.Tic();
 
         public Cell Cell {get; private set;}
 
-        public double CurrentX => Cell!=null?Cell.X:(Universe.X/2);
-        public double CurrentY => Cell!=null?Cell.Y:(Universe.Y/2);
+        public double CurrentX => Cell?.X ?? (Universe.World.X/2);
+        public double CurrentY => Cell?.Y ?? (Universe.World.Y/2);
 
         /* --- */
         public IJSRuntime JsRuntime {get; private set;}
@@ -53,7 +65,7 @@ namespace blagario.elements
         }
         public long YGame2World( double y )
         {
-            return (long) (long) ( y * this.Zoom);
+            return (long) ( y * this.Zoom);
         }
 
         internal void IncreaseZoom(float v)
@@ -63,11 +75,16 @@ namespace blagario.elements
 
         internal void PointTo(double bx, double by)
         {
-            Cell.PointTo(bx, by);
+            Cell?.PointTo(bx, by);
         }
 
         public void Tic()
         {
+            if ( (this.Cell?.Mass??0) == 0 ) 
+            {
+                this.Cell = null;
+            }
+
             if (DeltaZoom<0 && Zoom<0.5)
             {
                 DeltaZoom=0;
@@ -108,11 +125,11 @@ namespace blagario.elements
             if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
-            var nTimesTheDiameter = Math.Max( Cell.Diameter * 5, 30);
-            if (Cell.X - e.X + e.Radius > nTimesTheDiameter ) return false;
-            if (e.X - e.Radius - Cell.X > nTimesTheDiameter ) return false;
-            if (Cell.Y - e.Y + e.Radius > nTimesTheDiameter ) return false;
-            if (e.Y - e.Radius - Cell.Y > nTimesTheDiameter ) return false;
+            var nTimesTheDiameter = Math.Max( ( Cell?.Diameter ?? 50 ) * 5, 30);
+            if (CurrentX - e.X + e.Radius > nTimesTheDiameter ) return false;
+            if (e.X - e.Radius - CurrentX > nTimesTheDiameter ) return false;
+            if (CurrentY - e.Y + e.Radius > nTimesTheDiameter ) return false;
+            if (e.Y - e.Radius - CurrentY > nTimesTheDiameter ) return false;
             return true;
         }
 
