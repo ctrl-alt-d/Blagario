@@ -21,22 +21,27 @@ namespace blagario.elements
 
         public string MyColor;
 
-        public override async Task Tic() {
-            _Mass = _Mass * 0.9995;
-            if (_Mass<10) _Mass = 10;
-            await base.Tic();
+        public override async Task Tic(int fpsTicNum) {
+            _Mass = _Mass * 0.999995;
+            if (_Mass>0 && _Mass<10) _Mass = 10;
+            await base.Tic(fpsTicNum);
         }
 
         static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
 
         public override string CssStyle(Player c) => 
+            c.Cell==null
+            ?"visibility:none":
             this == c.Cell
             ?$@"
             top: {((long)(-this.Radius*c.Zoom + c.VisibleAreaY/2)).ToString()}px ;
             left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;
             width: {((long)(Diameter * c.Zoom)).ToString()}px ;
             height: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            background-color: #{MyColor}"
+            background-image:url('https://i.imgur.com/ZUbWYDl.jpg');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;"
+            //background-color: #{MyColor}"
             :base.CssStyle(c)
             +$@"position: absolute;
             background-color: #{MyColor};";
