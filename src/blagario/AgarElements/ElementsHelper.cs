@@ -16,5 +16,25 @@ namespace blagario.elements
             }
             return r.Value;
         }        
+
+        public static double TwoElementsDistance( AgarElement one, AgarElement other ) => 
+            Math.Sqrt(   
+                Math.Pow(one.X - other.X, 2) + 
+                Math.Pow(one.Y - other.Y, 2) 
+            );
+
+        public static bool CanOneElementEatsOtherOneByDistance(AgarElement oneElement, AgarElement otherElement)
+        {
+            var r = ElementsHelper.TwoElementsDistance(oneElement, otherElement) + otherElement.Radius * 0.4 < oneElement.Radius;
+            return r;
+        }
+
+        public static bool CanOneElementEatsOtherOneByMass(AgarElement oneElement, AgarElement otherElement)
+        {
+            var r = oneElement._Mass * 0.9 > otherElement._Mass;
+            return r;
+        }
+
+        
     }
 }

@@ -20,14 +20,22 @@ namespace blagario.elements
         public double X {set; get; }
         public double Y {set; get; }
         public double _Mass {set; get; }
+        public double _EatedMass {set; get; } = 0;
         public long Mass => (int)_Mass;
-        public virtual async Task Tic() 
+        public virtual async Task Tic(int fpsTicNum) 
         { 
+            double eat = 0;
+            if ( _EatedMass>0 ) 
+            {
+                eat = _Mass * 0.01;
+                eat = (eat>_EatedMass) ? _EatedMass : eat;
+            }
+
+            _EatedMass -= eat;
+            _Mass += eat;
             await Task.CompletedTask; 
         }        
         public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
-
-
 
         public virtual double Diameter => Radius * 2;
         public long CssX => (long)(X-Radius);

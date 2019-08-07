@@ -9,9 +9,10 @@ namespace blagario.elements
     public class World : AgarElement
     {
         public List<AgarElement> Elements;
+        public const double WorldSize = 1000; 
         public const long MaxMass = 60 * 1000;
         public const long MaxViruses = 100;        
-        public const long MaxPellets = 10000;        
+        public const long MaxPellets = 1000;        
 
         public override string CssStyle( Player c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
@@ -22,8 +23,8 @@ namespace blagario.elements
 
         public World(Universe universe)
         {
-            this.X = 1000;
-            this.Y = 1000;
+            this.X = WorldSize;
+            this.Y = WorldSize;
             Elements = new List<AgarElement>();
             Universe = universe;
         }
@@ -40,24 +41,68 @@ namespace blagario.elements
             EventHandler handler = OnTicReached;
             handler?.Invoke(this, e);
         }
-        public override async Task Tic()
+        public override async Task Tic(int fpsTicNum)
         {
             List<AgarElement> currentElements;
 
             lock(this.Elements) currentElements = this.Elements.OrderByDescending(e=>e._Mass).ToList();
-            foreach (var e in currentElements) await e.Tic();
+            foreach (var e in currentElements) await e.Tic(fpsTicNum);
 
-            var collisions = LocateCollisions(currentElements);
-            lock(this.Elements) ResolveCollitions(collisions);
+            if (fpsTicNum % (TimedHostedService.fps/3) == 0)  // 3 times per second
+            {
+                ManageCollitions(currentElements);
+            }
 
-            lock(this.Elements) currentElements = this.Elements.ToList();
-            CheckIfWoldNedsMoreViruses(currentElements);            
-            CheckIfWoldNedsMorePellets(currentElements);            
+            if ( (fpsTicNum+5) % TimedHostedService.fps == 0) // 1 time per second
+            {
+                currentElements = FillWorld();
+            }
 
-
-            await base.Tic();
+            await base.Tic(fpsTicNum);
 
             OnTic( EventArgs.Empty );
+        }
+
+        private List<AgarElement> FillWorld()
+        {
+            List<AgarElement> currentElements;
+            lock (this.Elements) currentElements = this.Elements.ToList();
+            CheckIfWoldNedsMoreViruses(currentElements);
+            CheckIfWoldNedsMorePellets(currentElements);
+            return currentElements;
+        }
+
+        private void ManageCollitions(List<AgarElement> currentElements)
+        {
+            var collisions = LocateCollisions(currentElements);
+            lock (this.Elements) ResolveCollitions(collisions);
+        }
+
+        private List<( AgarElement eater, List<AgarElement> eateds)> LocateCollisions(List<AgarElement> currentElements)
+        {
+            List<( AgarElement eater, List<AgarElement> eateds)> collision = new List<( AgarElement eater, List<AgarElement> eateds)>();
+
+            var cells = 
+                currentElements
+                .Select( (e,i) => new {e,i} )
+                .Where(x=>x.e.ElementType == ElementType.Cell)
+                .ToList();
+
+            foreach( var currentElement in cells )
+            {
+                var p = currentElements
+                .Skip( currentElement.i )
+                .Where( otherElement => 
+                        ElementsHelper.CanOneElementEatsOtherOneByMass( currentElement.e, otherElement ) &&
+                        ElementsHelper.CanOneElementEatsOtherOneByDistance( currentElement.e, otherElement ) )
+                .ToList<AgarElement>();
+
+                if (p.Any())
+                {
+                    collision.Add( (currentElement.e, p) );
+                }
+            }
+            return collision;
         }
 
         private void ResolveCollitions(List<( AgarElement eater, List<AgarElement> eateds)> collisions)
@@ -78,49 +123,24 @@ namespace blagario.elements
 
         private int ResolveEatElements(Cell eater, Pellet eated)
         {
-            eater._Mass += eated._Mass;
+            eater._EatedMass += eated._Mass;
             eated._Mass = 0;
             return 1;
         }
         private int ResolveEatElements(Cell eater, Cell eated)
         {
+            eater._EatedMass += eated._Mass;
+            eated._Mass = 0;
             return 1;
         }
         private int ResolveEatElements(Cell eater, Virus eated)
         {
+            eater._EatedMass += eated._Mass;
+            eated._Mass = 0;
             return 1;
         }
+
         
-        private List<( AgarElement eater, List<AgarElement> eateds)> LocateCollisions(List<AgarElement> currentElements)
-        {
-            List<( AgarElement eater, List<AgarElement> eateds)> collision = new List<( AgarElement eater, List<AgarElement> eateds)>();
-
-            var cells = 
-                currentElements
-                .Select( (e,i) => new {e,i} )
-                .Where(x=>x.e.ElementType == ElementType.Cell)
-                .ToList();
-
-            foreach( var currentElement in cells )
-            {
-                var ninetingPercentMass = currentElement.e._Mass * 0.9;
-
-                var p = currentElements
-                .Skip( currentElement.i )
-                .Where( otherElement => 
-                    ninetingPercentMass> otherElement._Mass &&
-                    Math.Abs(otherElement.X - currentElement.e.X) < ( otherElement.Radius + currentElement.e.Radius ) &&
-                    Math.Abs(otherElement.Y - currentElement.e.Y) < ( otherElement.Radius + currentElement.e.Radius ) )
-                .ToList<AgarElement>();
-
-                if (p.Any())
-                {
-                    collision.Add( (currentElement.e, p) );
-                }
-            }
-            return collision;
-        }
-
         private void CheckIfWoldNedsMorePellets(List<AgarElement> currentElements)
         {
             var nPellets = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
