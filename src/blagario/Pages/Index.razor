@@ -1,37 +1,33 @@
 ﻿@page "/"
 @inherits BaseIndex
 
+<!-- This is the universe. Who receives humans events. -->
 <div 
     class="universe" 
     style="@Universe.CssStyle(Player)"
     @onmousemove="@TrackMouse"
     @onmousewheel="@MouseWheel"
 >
+    <!-- This is the world. Where the virus, cells and other elements live. -->
     <div 
         class="world" 
         style="@Universe.World.CssStyle(Player)"
     >
+        <!-- All vivible elements from my cell: other cells, virus, pellets, w. -->
         @foreach (var element in VisibleElements )
         {
             <div class="@element.CssClass"
                 style="@element.CssStyle(Player)">
             </div>
         }
-
-        @if ( Player.Cell == null )
-        {
-            <div style="@Player.FormCss">
-            <input type="text" style="position:absolute; top:0; left:-100px; width: 350px;" @bind-value="@Player.Name" />
-            <input type="button" style="position:absolute; top:0; left:-150px; width:50px;" value="Play!" onclick="@Player.Play" />
-            </div>
-        }
-
     </div>
 
+    <!-- Top left: just say #blagario. -->
     <div class="scoreboard">
         <span style="color:green;">#BLAGARIO</span>
     </div>
 
+    <!-- Top right: leaderboard. -->
     <div class="leaderboard">
         <ul>
             @foreach( var cell in Universe.World.Leaderboard)
@@ -40,5 +36,14 @@
             }
         </ul>
     </div>
+
+    <!-- Need respawn: set a name to your cell. -->
+    @if ( Player.Cell == null )
+    {
+        <div class="respawn">
+        <input type="text" style="position:absolute; top:0; left:-100px; width: 350px; height: 30px; border: 0; padding: 0; padding-left:10px;" @bind-value="@Player.Name" />
+        <input type="button" style="position:absolute; top:0; left:-150px; width:50px; ; height: 30px;" value="Play!" onclick="@Player.Play" />
+        </div>
+    }
 
 </div>

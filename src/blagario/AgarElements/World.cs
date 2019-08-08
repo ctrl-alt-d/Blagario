@@ -47,7 +47,7 @@ namespace blagario.elements
         {
             List<AgarElement> currentElements;
 
-            lock(this.Elements) currentElements = this.Elements.OrderBy(e=>e._Mass).ToList();
+            lock(this.Elements) currentElements = this.Elements.OrderBy(e=>e._Mass).ToList();  // primer pintem els petits després els grans.
             foreach (var e in currentElements) await e.Tic(fpsTicNum);
 
             if (fpsTicNum % (TimedHostedService.fps/3) == 0)  // 3 times per second
@@ -57,7 +57,12 @@ namespace blagario.elements
 
             if ( (fpsTicNum+5) % TimedHostedService.fps == 0) // 1 time per second
             {
-                currentElements = FillWorld();
+                currentElements = FillWorld(ElementType.Virus);
+            }
+
+            if ( (fpsTicNum+25) % TimedHostedService.fps == 0) // 1 time per second
+            {
+                currentElements = FillWorld(ElementType.Pellet);
             }
 
             await base.Tic(fpsTicNum);
@@ -65,19 +70,20 @@ namespace blagario.elements
             OnTic( EventArgs.Empty );
         }
 
-        private List<AgarElement> FillWorld()
+        private List<AgarElement> FillWorld(ElementType elementType)
         {
             List<AgarElement> currentElements;
             lock (this.Elements) currentElements = this.Elements.ToList();
-            CheckIfWoldNedsMoreViruses(currentElements);
-            CheckIfWoldNedsMorePellets(currentElements);
+            if (elementType == ElementType.Virus) CheckIfWoldNedsMoreViruses(currentElements);
+            if (elementType == ElementType.Pellet) CheckIfWoldNedsMorePellets(currentElements);
             return currentElements;
         }
 
         private void ManageCollitions(List<AgarElement> currentElements)
         {
             var collisions = LocateCollisions(currentElements);
-            lock (this.Elements) ResolveCollitions(collisions);
+            ResolveCollitions(collisions);
+            lock(this.Elements) this.Elements.OrderBy(x=>x._Mass).ToList().RemoveAll(e=>e._Mass == 0);
         }
 
         private List<( AgarElement eater, List<AgarElement> eateds)> LocateCollisions(List<AgarElement> currentElements)
@@ -90,18 +96,18 @@ namespace blagario.elements
                 .Where(x=>x.e.ElementType == ElementType.Cell)
                 .ToList();
 
-            foreach( var currentElement in cells )
+            foreach( var currentCell in cells )
             {
                 var p = currentElements
-                .Take( currentElement.i )
+                .Take( currentCell.i )
                 .Where( otherElement => 
-                        ElementsHelper.CanOneElementEatsOtherOneByMass( currentElement.e, otherElement ) &&
-                        ElementsHelper.CanOneElementEatsOtherOneByDistance( currentElement.e, otherElement ) )
+                        ElementsHelper.CanOneElementEatsOtherOneByMass( currentCell.e, otherElement ) &&
+                        ElementsHelper.CanOneElementEatsOtherOneByDistance( currentCell.e, otherElement ) )
                 .ToList<AgarElement>();
 
                 if (p.Any())
                 {
-                    collision.Add( (currentElement.e, p) );
+                    collision.Add( (currentCell.e, p) );
                 }
             }
             return collision;
@@ -119,8 +125,7 @@ namespace blagario.elements
                         t == (ElementType.Cell, ElementType.Cell)?ResolveEatElements( eater as Cell, eated as Cell):
                         t == (ElementType.Cell, ElementType.Virus)?ResolveEatElements( eater as Cell, eated as Virus):
                         0;
-                }
-            var removed = this.Elements.RemoveAll(e=>e._Mass == 0);
+                }            
         }
 
         private int ResolveEatElements(Cell eater, Pellet eated)
@@ -147,9 +152,8 @@ namespace blagario.elements
         {
             var nPellets = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
             var mass = currentElements.Sum(e=>e.Mass);
-            if ( nPellets < MaxPellets && mass < MaxMass )
-            lock(this.Elements)
-            while( nPellets < MaxPellets && mass < MaxMass )
+            var worldNeedsMorePellets = nPellets < MaxPellets && mass < MaxMass;
+            if (worldNeedsMorePellets) lock(this.Elements) while( nPellets < MaxPellets && mass < MaxMass )
             {
                 var e = Pellet.CreatePellet(this.Universe);        
                 mass += e.Mass;        
@@ -159,12 +163,10 @@ namespace blagario.elements
 
         private void CheckIfWoldNedsMoreViruses(List<AgarElement> currentElements)
         {
-            var nViruses = currentElements.Where(x=>x.ElementType == ElementType.Pellet).Count();
+            var nViruses = currentElements.Where(x=>x.ElementType == ElementType.Virus).Count();
             var mass = currentElements.Sum(e=>e.Mass);
-
-            if (nViruses < MaxViruses && mass < MaxMass)
-            lock(this.Elements)
-            while( nViruses < MaxViruses && mass < MaxMass )
+            var worldNeedsMoreViruses = (nViruses < MaxViruses && mass < MaxMass);
+            if (worldNeedsMoreViruses) lock(this.Elements) while( nViruses < MaxViruses && mass < MaxMass )
             {
                 var e = Virus.CreateVirus(this.Universe);
                 mass += e.Mass;        
