@@ -30,7 +30,7 @@ namespace blagario.elements
 
         }
 
-        private void OnTicEvent(object o, EventArgs e) => this.Tic();
+        private void OnTicEvent(object o, WorldTicEventArgs e) => this.Tic(e.FpsTicNum);
 
         public Cell Cell {get; private set;}
 
@@ -81,7 +81,7 @@ namespace blagario.elements
             Cell.PointTo(bx, by);
         }
 
-        public void Tic()
+        public void Tic(int fpsTicNum)
         {
             this.Cell.Purge();
 
@@ -100,6 +100,11 @@ namespace blagario.elements
                 var d = DeltaZoom / 20;
                 DeltaZoom -= d;
                 Zoom += d;
+            }
+
+            if ( (fpsTicNum+8) % TimedHostedService.fps == 0)
+            {                
+                Task.Run( async () => await SetFocusToUniverse() );
             }
         }
 
@@ -157,6 +162,12 @@ namespace blagario.elements
             this.VisibleAreaY = visibleArea[1];
             await JsRuntime.InvokeAsync<object>("AreaResized", CreateDotNetObjectRef(this) );
         }            
+
+        public async Task SetFocusToUniverse(IJSRuntime jsRuntime = null)
+        {
+            JsRuntime = jsRuntime ?? JsRuntime;
+            await JsRuntime.InvokeAsync<object>("SetFocusToUniverse");
+        }   
 
         #region Hack to fix https://github.com/aspnet/AspNetCore/issues/11159
 

@@ -79,7 +79,9 @@ namespace blagario
         }
         protected async Task OnAfterFirstRenderAsync()
         {
-            await Player.CheckVisibleArea(JsRuntime);
+            await Player.CheckVisibleArea(JsRuntime);    
+            await Player.SetFocusToUniverse(JsRuntime);
         }
+
     }
 }

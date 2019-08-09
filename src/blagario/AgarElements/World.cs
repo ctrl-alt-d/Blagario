@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 namespace blagario.elements
 {
 
+    public class WorldTicEventArgs: EventArgs
+    {
+        public int FpsTicNum {set;get;}
+    }
+
     public class World : AgarElement
     {
         public List<AgarElement> Elements;
@@ -36,11 +41,11 @@ namespace blagario.elements
         public IEnumerable<CellPart> Leaderboard => Elements.Where(x => x.ElementType == ElementType.CellPart ).Select(x=> x as CellPart).OrderByDescending(x => x._Mass ).Take(10);
 
 
-        public event EventHandler OnTicReached;
+        public event EventHandler<WorldTicEventArgs> OnTicReached;
 
-        protected virtual void OnTic(EventArgs e)
+        protected virtual void OnTic(WorldTicEventArgs e)
         {
-            EventHandler handler = OnTicReached;
+            var handler = OnTicReached;
             handler?.Invoke(this, e);
         }
         public override async Task Tic(int fpsTicNum)
@@ -67,7 +72,7 @@ namespace blagario.elements
 
             await base.Tic(fpsTicNum);
 
-            OnTic( EventArgs.Empty );
+            OnTic( new WorldTicEventArgs {FpsTicNum=fpsTicNum} );
         }
 
         private List<AgarElement> FillWorld(ElementType elementType)

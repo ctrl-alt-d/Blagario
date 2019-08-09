@@ -30,6 +30,7 @@ namespace blagario.elements
             newPart.X = this.X.Value + 100;
             newPart.Y = this.Y.Value + 100;
             newPart._Mass = currentPart._Mass;
+            newPart.PointTo(currentPart.PointingXto, currentPart.PointingYto);
             this.Add(newPart);
         }
     }

@@ -8,6 +8,9 @@ namespace blagario.elements
         protected double Vx {get; private set;} = 0;
         protected double Vy {get; private set;} = 0;
 
+        public double PointingXto {get; private set; };
+        public double PointingYto {get; private set; };
+
         public virtual double Vel {get; protected set;} = 1;
 
         public virtual void PointTo( double x, double y )
@@ -34,6 +37,9 @@ namespace blagario.elements
 
             this.Vy = this.Vel * sinAlf;
             this.Vx = this.Vel * cosAlf;
+
+            PointingXto = x;
+            PointingYto = y;
 
         }
 
