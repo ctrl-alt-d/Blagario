@@ -52,6 +52,23 @@ namespace blagario
             Player.IncreaseZoom( - (float)(e.DeltaY/100.0) );
         }
 
+        protected void KeyDown(UIKeyboardEventArgs e)
+        {
+            //Issue: KeyDown only is fired when input has focus.
+            //System.Console.WriteLine( $"Presset: [{e.Key}]"  );
+            switch (e.Key)
+            {
+                case " ":
+                    Player.Cell.Split();
+                break;
+            }
+        }
+
+        protected void OnClick(UIMouseEventArgs e)
+        {
+            Player.Cell.Split();
+        }
+
         protected async override Task OnAfterRenderAsync()
         {
             if (!Rendered) 

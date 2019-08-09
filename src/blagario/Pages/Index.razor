@@ -3,20 +3,26 @@
 
 <!-- This is the universe. Who receives humans events. -->
 <div 
+    @key="@Universe.Key"
     class="universe" 
     style="@Universe.CssStyle(Player)"
     @onmousemove="@TrackMouse"
     @onmousewheel="@MouseWheel"
+    @onkeydown="@KeyDown"
+    @onclick="@OnClick"
 >
     <!-- This is the world. Where the virus, cells and other elements live. -->
     <div 
+        @key="@Universe.World.Key"
         class="world" 
         style="@Universe.World.CssStyle(Player)"
     >
         <!-- All vivible elements from my cell: other cells, virus, pellets, w. -->
         @foreach (var element in VisibleElements )
         {
-            <div class="@element.CssClass"
+            <div 
+                @key="@element.Key"
+                class="@element.CssClass" 
                 style="@element.CssStyle(Player)">
             </div>
         }
@@ -38,7 +44,7 @@
     </div>
 
     <!-- Need respawn: set a name to your cell. -->
-    @if ( Player.CellPart == null )
+    @if ( Player.Cell.IsDead )
     {
         <div class="respawn">
         <input type="text" style="position:absolute; top:0; left:-100px; width: 350px; height: 30px; border: 0; padding: 0; padding-left:10px;" @bind-value="@Player.Name" />

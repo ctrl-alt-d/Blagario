@@ -15,7 +15,8 @@ namespace blagario.elements
     public class AgarElement
     {
         protected static readonly Random getrandom = new Random();
-
+        private Guid key = Guid.NewGuid();
+        public string Key => key.ToString();
         public ElementType ElementType {get; protected set; }
         public string Name {get; set;} = "";
         public double X {set; get; }

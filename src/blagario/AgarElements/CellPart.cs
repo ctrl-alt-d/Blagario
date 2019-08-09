@@ -37,15 +37,8 @@ namespace blagario.elements
 
             
         public override string CssStyle(Player c) => 
-            c.CellPart==null
-            ?"visibility:none":
-            this == c.CellPart
-            ?$@"
-            top: {((long)(-this.Radius*c.Zoom + c.VisibleAreaY/2)).ToString()}px ;
-            left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;
-            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            {pepaCss}"
+            c.Cell.IsDead
+            ?"visibility:none"
             :base.CssStyle(c)
             +$@"position: absolute;
             background-color: #{MyColor};";
