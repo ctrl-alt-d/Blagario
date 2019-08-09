@@ -38,7 +38,7 @@
     </div>
 
     <!-- Need respawn: set a name to your cell. -->
-    @if ( Player.Cell == null )
+    @if ( Player.CellPart == null )
     {
         <div class="respawn">
         <input type="text" style="position:absolute; top:0; left:-100px; width: 350px; height: 30px; border: 0; padding: 0; padding-left:10px;" @bind-value="@Player.Name" />

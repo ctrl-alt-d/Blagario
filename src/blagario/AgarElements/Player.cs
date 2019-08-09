@@ -11,7 +11,7 @@ namespace blagario.elements
         public Player(Universe universe)
         {
             Universe = universe;
-            Cell = null ; //new Cell(universe);
+            CellPart = null ; //new Cell(universe);
             Universe.World.OnTicReached += OnTicEvent;
         }
         public string FormCss => $@"
@@ -23,16 +23,16 @@ namespace blagario.elements
         public string Name {set; get;} 
         public void Play()
         {
-            Cell = new Cell(Universe);
-            Cell.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
+            CellPart = new CellPart(Universe);
+            CellPart.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
         }
 
         private void OnTicEvent(object o, EventArgs e) => this.Tic();
 
-        public Cell Cell {get; private set;}
+        public CellPart CellPart {get; private set;}
 
-        public double CurrentX => Cell?.X ?? (Universe.World.X/2);
-        public double CurrentY => Cell?.Y ?? (Universe.World.Y/2);
+        public double CurrentX => CellPart?.X ?? (Universe.World.X/2);
+        public double CurrentY => CellPart?.Y ?? (Universe.World.Y/2);
 
         /* --- */
         public IJSRuntime JsRuntime {get; private set;}
@@ -75,14 +75,14 @@ namespace blagario.elements
 
         internal void PointTo(double bx, double by)
         {
-            Cell?.PointTo(bx, by);
+            CellPart?.PointTo(bx, by);
         }
 
         public void Tic()
         {
-            if ( (this.Cell?.Mass??0) == 0 ) 
+            if ( (this.CellPart?.Mass??0) == 0 ) 
             {
-                this.Cell = null;
+                this.CellPart = null;
             }
 
             if (DeltaZoom<0 && Zoom<0.5)
@@ -125,7 +125,7 @@ namespace blagario.elements
             if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
-            var nTimesTheDiameter = Math.Max( ( Cell?.Diameter ?? 50 ) * 5, 30);
+            var nTimesTheDiameter = Math.Max( ( CellPart?.Diameter ?? 50 ) * 5, 30);
             if (CurrentX - e.X + e.Radius > nTimesTheDiameter ) return false;
             if (e.X - e.Radius - CurrentX > nTimesTheDiameter ) return false;
             if (CurrentY - e.Y + e.Radius > nTimesTheDiameter ) return false;

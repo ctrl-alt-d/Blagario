@@ -33,7 +33,7 @@ namespace blagario.elements
         public IEnumerable<Virus> Viruses => Elements.Where(x => x.ElementType == ElementType.Virus ).Select(x=>x as Virus);
         public IEnumerable<Pellet> Pellets => Elements.Where(x => x.ElementType == ElementType.Pellet ).Select(x=>x as Pellet);
 
-        public IEnumerable<Cell> Leaderboard => Elements.Where(x => x.ElementType == ElementType.Cell ).Select(x=> x as Cell).OrderByDescending(x => x._Mass ).Take(10);
+        public IEnumerable<CellPart> Leaderboard => Elements.Where(x => x.ElementType == ElementType.CellPart ).Select(x=> x as CellPart).OrderByDescending(x => x._Mass ).Take(10);
 
 
         public event EventHandler OnTicReached;
@@ -93,7 +93,7 @@ namespace blagario.elements
             var cells = 
                 currentElements
                 .Select( (e,i) => new {e,i} )
-                .Where(x=>x.e.ElementType == ElementType.Cell)
+                .Where(x=>x.e.ElementType == ElementType.CellPart)
                 .ToList();
 
             foreach( var currentCell in cells )
@@ -121,26 +121,26 @@ namespace blagario.elements
                     if (eated._Mass == 0) continue;
                     var t = (eater.ElementType, eated.ElementType );
                     var _ = 
-                        t == (ElementType.Cell, ElementType.Pellet)?ResolveEatElements( eater as Cell, eated as Pellet):
-                        t == (ElementType.Cell, ElementType.Cell)?ResolveEatElements( eater as Cell, eated as Cell):
-                        t == (ElementType.Cell, ElementType.Virus)?ResolveEatElements( eater as Cell, eated as Virus):
+                        t == (ElementType.CellPart, ElementType.Pellet)?ResolveEatElements( eater as CellPart, eated as Pellet):
+                        t == (ElementType.CellPart, ElementType.CellPart)?ResolveEatElements( eater as CellPart, eated as CellPart):
+                        t == (ElementType.CellPart, ElementType.Virus)?ResolveEatElements( eater as CellPart, eated as Virus):
                         0;
                 }            
         }
 
-        private int ResolveEatElements(Cell eater, Pellet eated)
+        private int ResolveEatElements(CellPart eater, Pellet eated)
         {
             eater._EatedMass += eated._Mass;
             eated._Mass = 0;
             return 1;
         }
-        private int ResolveEatElements(Cell eater, Cell eated)
+        private int ResolveEatElements(CellPart eater, CellPart eated)
         {
             eater._EatedMass += eated._Mass;
             eated._Mass = 0;
             return 1;
         }
-        private int ResolveEatElements(Cell eater, Virus eated)
+        private int ResolveEatElements(CellPart eater, Virus eated)
         {
             eater._EatedMass += eated._Mass;
             eated._Mass = 0;

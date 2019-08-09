@@ -2,13 +2,13 @@ using System.Threading.Tasks;
 
 namespace blagario.elements
 {
-    public class Cell: MoveableAgarElement
+    public class CellPart: MoveableAgarElement
     {
-        public Cell(Universe universe)
+        public CellPart(Universe universe)
         {
             this.Universe = universe;
             this._Mass = 542; //ToDo: move to 17 some day.
-            this.ElementType = ElementType.Cell;
+            this.ElementType = ElementType.CellPart;
             var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
             var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
             this.X = goodPlaceForX;
@@ -37,9 +37,9 @@ namespace blagario.elements
 
             
         public override string CssStyle(Player c) => 
-            c.Cell==null
+            c.CellPart==null
             ?"visibility:none":
-            this == c.Cell
+            this == c.CellPart
             ?$@"
             top: {((long)(-this.Radius*c.Zoom + c.VisibleAreaY/2)).ToString()}px ;
             left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;

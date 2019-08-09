@@ -9,7 +9,7 @@ namespace blagario.elements
         World,
         Virus,
         Pellet,
-        Cell,
+        CellPart,
         W
     }
     public class AgarElement
