@@ -55,19 +55,20 @@ namespace blagario.Unit.Tests
                 |<-----12------->|                                                                                                
                 |<----10---->|                                                                                                
                 o ---- (---- o --)-)
-                       |<-4->|<-4->|
+                       |<-6->|<-6->|
 
             */
 
             // taken 2 closed elements 
-            var one = new AgarElement() {X=500, Y=100, _Mass=MassFromRadius(12)  } ;
-            var other = new AgarElement() {X=510, Y=100, _Mass=MassFromRadius(4) } ;
+            var one = new AgarElement() {X=500, Y=100, _Mass=MassFromRadius(12)  };
+            var other = new AgarElement() {X=510, Y=100, _Mass=MassFromRadius(6) };
 
             // When check for eatability
             var canEat = ElementsHelper.CanOneElementEatsOtherOneByDistance(one,other);
 
-            // One must be able to eat the other one
+            // One must be unable to eat the other one
             Assert.False(canEat);
+            
         }
 
         [Fact]

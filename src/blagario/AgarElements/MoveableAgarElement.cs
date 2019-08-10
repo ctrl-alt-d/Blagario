@@ -8,10 +8,11 @@ namespace blagario.elements
         protected double Vx {get; private set;} = 0;
         protected double Vy {get; private set;} = 0;
 
-        public double PointingXto {get; private set; };
-        public double PointingYto {get; private set; };
+        public double PointingXto {get; private set; }
+        public double PointingYto {get; private set; }
 
         public virtual double Vel {get; protected set;} = 1;
+        public virtual double VelBase {get; protected set;} = 1;
 
         public virtual void PointTo( double x, double y )
         {            
@@ -40,6 +41,34 @@ namespace blagario.elements
 
             PointingXto = x;
             PointingYto = y;
+
+        }
+
+
+        public virtual void PushTo( double x, double y, double force )
+        {            
+
+            /*              o <---mouse (x,y)
+                           /|
+                          / |
+                         /  |dy
+                    Vx  /   |
+                    ---o <--- new point
+                    | /|    |
+                    |/ | Vy | 
+            cell--->o----------------
+                    |---dx--|
+
+            */
+
+            var dx = x - this.X;
+            var dy = y - this.Y;
+            var d = Math.Sqrt( dx*dx + dy*dy );
+            var sinAlf = dy / d;
+            var cosAlf = dx / d;
+
+            this.Vy = this.VelBase * force * sinAlf;
+            this.Vx = this.VelBase * force * cosAlf;
 
         }
 

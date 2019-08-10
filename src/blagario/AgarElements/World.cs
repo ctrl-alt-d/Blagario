@@ -15,7 +15,7 @@ namespace blagario.elements
     {
         public List<AgarElement> Elements;
         public const double WorldSize = 1000; 
-        public const long MaxMass = 60 * 1000;
+        public override long MaxMass {set; get; } = 60 * 1000;
         public const long MaxViruses = 100;        
         public const long MaxPellets = 1000;        
 
@@ -107,6 +107,7 @@ namespace blagario.elements
                 .Take( currentCell.i )
                 .Where( otherElement => 
                         ElementsHelper.CanOneElementEatsOtherOneByMass( currentCell.e, otherElement ) &&
+                        ElementsHelper.CanOneElementEatsOtherOneByCellGroup(currentCell.e, otherElement) &&
                         ElementsHelper.CanOneElementEatsOtherOneByDistance( currentCell.e, otherElement ) )
                 .ToList<AgarElement>();
 
@@ -141,6 +142,7 @@ namespace blagario.elements
         }
         private int ResolveEatElements(CellPart eater, CellPart eated)
         {
+
             eater._EatedMass += eated._Mass;
             eated._Mass = 0;
             return 1;

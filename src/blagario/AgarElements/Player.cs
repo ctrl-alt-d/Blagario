@@ -11,7 +11,7 @@ namespace blagario.elements
         public Player(Universe universe)
         {
             Universe = universe;
-            Cell = new Cell();
+            Cell = new Cell(this.Universe);
             Universe.World.OnTicReached += OnTicEvent;
         }
         public string FormCss => $@"
@@ -24,7 +24,7 @@ namespace blagario.elements
         public void Play()
         {
 
-            var cellPart = new CellPart(Universe);
+            var cellPart = new CellPart(Universe, Cell);
             cellPart.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
             this.Cell.Add(cellPart);
 

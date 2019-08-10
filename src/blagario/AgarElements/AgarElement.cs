@@ -23,7 +23,9 @@ namespace blagario.elements
         public double Y {set; get; }
         public double _Mass {set; get; }
         public double _EatedMass {set; get; } = 0;
+        public virtual bool EatableByMySelf {set; get; } = false;
         public long Mass => (int)_Mass;
+        public virtual long MaxMass {set; get; } = 20000;
         public virtual async Task Tic(int fpsTicNum) 
         { 
             double eat = 0;
