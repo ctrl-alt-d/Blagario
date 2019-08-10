@@ -8,6 +8,9 @@ namespace blagario.elements
         protected double Vx {get; private set;} = 0;
         protected double Vy {get; private set;} = 0;
 
+        protected double VxPushed {get; private set;} = 0;
+        protected double VyPushed {get; private set;} = 0;
+
         public double PointingXto {get; private set; }
         public double PointingYto {get; private set; }
 
@@ -67,8 +70,8 @@ namespace blagario.elements
             var sinAlf = dy / d;
             var cosAlf = dx / d;
 
-            this.Vy = this.VelBase * force * sinAlf;
-            this.Vx = this.VelBase * force * cosAlf;
+            this.VyPushed = this.VelBase * force * sinAlf;
+            this.VxPushed = this.VelBase * force * cosAlf;
 
         }
 
@@ -78,6 +81,12 @@ namespace blagario.elements
 
             this.X = this.X > Universe.World.X?Universe.World.X:this.X;
             this.Y = this.Y > Universe.World.Y?Universe.World.Y:this.Y;
+
+            this.X += VxPushed;
+            this.Y += VyPushed;
+
+            VxPushed = 0;
+            VyPushed = 0;
 
             this.X = this.X < 0?0:this.X;
             this.Y = this.Y < 0?0:this.Y;

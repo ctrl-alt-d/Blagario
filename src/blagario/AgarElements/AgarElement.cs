@@ -42,15 +42,15 @@ namespace blagario.elements
         public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
 
         public virtual double Diameter => Radius * 2;
-        public long CssX => (long)(X-Radius);
-        public long CssY => (long)(Y-Radius);
+        public long CssX =>ElementsHelper.TryConvert(X-Radius);
+        public long CssY =>ElementsHelper.TryConvert(Y-Radius);        
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
         public virtual string CssStyle( Player c) => $@"
             top: {(c.YGame2World(CssY)).ToString()}px ;
             left: {(c.XGame2World(CssX)).ToString()}px ;
-            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
+            width: {(ElementsHelper.TryConvert(Diameter * c.Zoom)).ToString()}px ;
+            height: {(ElementsHelper.TryConvert(Diameter * c.Zoom)).ToString()}px ;
             ";
     }
 }

@@ -43,7 +43,7 @@ namespace blagario.elements
                 .ToList();
             foreach( var otherCells in collisions )
             {            
-                this.PushTo( -otherCells.X, -otherCells.Y, 2 );
+                this.PushTo( 2*X-otherCells.X , 2*Y-otherCells.Y, 2 );
             }
 
             await base.Tic(fpsTicNum);

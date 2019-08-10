@@ -58,6 +58,16 @@ namespace blagario.elements
             
         }
 
-        
+        public static Int64 TryConvert(object n)
+        {
+            try{
+                return Convert.ToInt64(n);
+            }
+            catch
+            {
+                return 0;
+            }
+            
+        }
     }
 }

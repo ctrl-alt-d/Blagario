@@ -22,8 +22,8 @@ namespace blagario.elements
         public override string CssStyle( Player c ) =>$@"
             top: {c.YGame2Physics(0)}px ;
             left: {c.XGame2Physics(0)}px;
-            width: {((long)(X * c.Zoom)).ToString()}px ;
-            height: {((long)(Y * c.Zoom)).ToString()}px ; 
+            width: {(ElementsHelper.TryConvert(X * c.Zoom)).ToString()}px ;
+            height: {(ElementsHelper.TryConvert(Y * c.Zoom)).ToString()}px ; 
             "; 
 
         public World(Universe universe)

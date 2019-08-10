@@ -51,24 +51,24 @@ namespace blagario.elements
             var distance_to_cell = ( x - CurrentX ) * this.Zoom;
             var center_point = this.VisibleAreaX / 2;
             var distance_to_center_point = center_point + distance_to_cell;
-            return (long) distance_to_center_point;
+            return ElementsHelper.TryConvert( distance_to_center_point );
         }
         public long YGame2Physics( double y )
         {
             var distance_to_cell = ( y - CurrentY ) * this.Zoom;
             var center_point = this.VisibleAreaY / 2;
             var distance_to_center_point = center_point + distance_to_cell;
-            return (long) distance_to_center_point;
+            return ElementsHelper.TryConvert( distance_to_center_point );
         }
 
         /* --- */
         public long XGame2World( double x )
         {
-            return (long) ( x * this.Zoom);
+            return ElementsHelper.TryConvert( x * this.Zoom);
         }
         public long YGame2World( double y )
         {
-            return (long) ( y * this.Zoom);
+            return ElementsHelper.TryConvert( y * this.Zoom);
         }
 
         internal void IncreaseZoom(float v)
