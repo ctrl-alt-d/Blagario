@@ -102,7 +102,7 @@ namespace blagario.elements
                 Zoom += d;
             }
 
-            if ( (fpsTicNum+8) % TimedHostedService.fps == 0)
+            if ( !Cell.IsDead && (fpsTicNum+8) % TimedHostedService.fps == 0)
             {                
                 Task.Run( async () => await SetFocusToUniverse() );
             }

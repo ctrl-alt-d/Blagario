@@ -24,29 +24,27 @@ namespace blagario.elements
         public string Name => this.FirstOrDefault()?.Name;
         public string MyColor => this.FirstOrDefault()?.MyColor;
 
-        internal void Split()
+        public void Split()
         {
             if (IsDead) return;
             var newParts = new List<CellPart>();
             foreach( var currentPart in this.SplittableParts)
             {
+                //if (newParts.Count + this.Count >= 16 ) break;
                 currentPart._Mass /= 2;
                 var newPart = new CellPart(Universe, currentPart.Cell);
                 newPart.Name =this.Name;
                 newPart.MyColor = this.MyColor;
                 var deltaX = 0.1 * ( newPart.PointingXto > newPart.X ? 1 : -1 );
                 var deltaY = 0.1 * ( newPart.PointingYto > newPart.Y ? 1 : -1 );
-                newPart.X = this.X.Value+deltaX;
-                newPart.Y = this.Y.Value+deltaY;
+                newPart.X = currentPart.X+deltaX;
+                newPart.Y = currentPart.Y+deltaY;
                 newPart._Mass = currentPart._Mass;
                 newPart.ChangeVelToSplitVel();
                 newPart.PointTo(currentPart.PointingXto, currentPart.PointingYto);
                 newParts.Add(newPart);
             }
-            foreach( var newPart in newParts )
-            {
-                this.Add( newPart );
-            }
+            this.AddRange( newParts );
         }
     }
 }

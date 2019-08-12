@@ -14,7 +14,7 @@ namespace blagario.elements
             var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
             this.X = goodPlaceForX;
             this.Y = goodPlaceForY;            
-            universe.World.Elements.Add(this);
+            lock(this.Universe.World.Elements) Universe.World.Elements.Add(this);
             MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
             Cell = cell;
         }
