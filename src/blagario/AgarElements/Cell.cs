@@ -1,59 +1,50 @@
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace blagario.elements
 {
-    public class Cell: MoveableAgarElement
+    public class Cell: List<CellPart>
     {
         public Cell(Universe universe)
         {
             this.Universe = universe;
-            this._Mass = 542; //ToDo: move to 17 some day.
-            this.ElementType = ElementType.Cell;
-            var goodPlaceForX = getrandom.Next(0,(int)universe.World.X);
-            var goodPlaceForY = getrandom.Next(0,(int)universe.World.Y);
-            this.X = goodPlaceForX;
-            this.Y = goodPlaceForY;            
-            universe.World.Elements.Add(this);
-            MyColor = availableColors[ getrandom.Next(0, availableColors.Length) ];
         }
+        public double? TotalMass => this.Select(c => c._Mass).Sum();
+        public double? Diameter => this.Select(c => c.Diameter).Sum();
+        public double? X => this.FirstOrDefault()?.X; 
+        public double? Y => this.FirstOrDefault()?.Y; 
+        public void PointTo(double bx, double by) => this.ForEach(c => c.PointTo(bx, by) );
+        public void Purge() => this.RemoveAll(x=>x._Mass == 0);
+        public bool IsDead => (TotalMass??0) == 0;
+        public bool CurrentlySplitted => this.Count()>=2;
+        public IEnumerable<CellPart> SplittableParts => this.Where(e=>e._Mass  >= 35 ).ToList();
+        public bool CanSplit => this.Count() <= 12 && SplittableParts.Any();
+        public Universe Universe {set; get;}
+        public string Name => this.FirstOrDefault()?.Name;
+        public string MyColor => this.FirstOrDefault()?.MyColor;
 
-        public override double Vel => 0.2;
-
-        public string MyColor;
-
-        public override async Task Tic(int fpsTicNum) {
-            _Mass = _Mass * 0.999995;
-            if (_Mass>0 && _Mass<10) _Mass = 10;
-            await base.Tic(fpsTicNum);
-        }
-
-        static string[] availableColors = new string [] {"2ecc71", "3498db", "9b59b6", "f1c40f", "e67e22", "e74c3c" };
-
-        private string pepaCss => Name=="Pepa"?$@"
-            background-image:url('https://i.imgur.com/ZUbWYDl.jpg');
-            background-repeat: no-repeat;
-            background-size: 100% 100%;":
-            "background-color: #{MyColor}";
-
-            
-        public override string CssStyle(Player c) => 
-            c.Cell==null
-            ?"visibility:none":
-            this == c.Cell
-            ?$@"
-            top: {((long)(-this.Radius*c.Zoom + c.VisibleAreaY/2)).ToString()}px ;
-            left: {((long)(-this.Radius*c.Zoom + c.VisibleAreaX/2)).ToString()}px ;
-            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            {pepaCss}"
-            :base.CssStyle(c)
-            +$@"position: absolute;
-            background-color: #{MyColor};";
-
-        public override void PointTo( double x, double y )
+        public void Split()
         {
-            base.PointTo( x, y );
+            if (IsDead) return;
+            var newParts = new List<CellPart>();
+            foreach( var currentPart in this.SplittableParts)
+            {
+                //if (newParts.Count + this.Count >= 16 ) break;
+                currentPart._Mass /= 2;
+                var newPart = new CellPart(Universe, currentPart.Cell);
+                newPart.Name =this.Name;
+                newPart.MyColor = this.MyColor;
+                var deltaX = 0.1 * ( newPart.PointingXto > newPart.X ? 1 : -1 );
+                var deltaY = 0.1 * ( newPart.PointingYto > newPart.Y ? 1 : -1 );
+                newPart.X = currentPart.X+deltaX;
+                newPart.Y = currentPart.Y+deltaY;
+                newPart._Mass = currentPart._Mass;
+                newPart.ChangeVelToSplitVel();
+                newPart.PointTo(currentPart.PointingXto, currentPart.PointingYto);
+                newParts.Add(newPart);
+            }
+            this.AddRange( newParts );
         }
-
     }
 }

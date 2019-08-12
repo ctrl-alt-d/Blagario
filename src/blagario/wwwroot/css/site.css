@@ -4,7 +4,7 @@ html, body {
 
 .universe {
     position: fixed;
-    background-color: grey;    
+    background-color: rgb(15, 90, 15);    
     margin: 0;
     padding: 0;
     border: 0;
@@ -12,10 +12,10 @@ html, body {
 
 .scoreboard {
     position: fixed;
-    background-color: black;    
+    background-color: rgba(0, 0, 0, 0.507);    
     margin: 0;
     padding: 0;
-    border: 1px solid red;
+    border: 1px solid rgba(255, 0, 0, 0.555);
     top: 10px;
     left: 10px;
     width: 100px;
@@ -39,7 +39,7 @@ html, body {
     border: 0;
 }
 
-.cell {
+.cellpart {
     position: fixed;
     border-radius: 50%;
     background-color: orange;
@@ -53,7 +53,7 @@ html, body {
     border-radius: 50%;
     width: 100px;
     height: 100px;
-    background: green;
+    background: rgba(0, 128, 0, 0.671);
     margin: 0;
     padding: 0;
     border: 0;
@@ -72,10 +72,10 @@ html, body {
 
 .leaderboard {    
     position: fixed;
-    background-color: black;    
+    background-color:#00000081;    
     margin: 0;
     padding: 0;
-    border: 1px solid red;
+    border: 1px solid rgba(255, 0, 0, 0.644);
     width: 200px;
     top: 10px;
     right: 10px;
@@ -86,6 +86,12 @@ html, body {
     padding: 14px;
     margin: 0;
     color: white;
+}
+
+.respawn {
+    position: fixed;
+    top: 50%;
+    left: 50%;  
 }
 
 

@@ -8,11 +8,7 @@ namespace blagario.elements
     public class Universe : AgarElement
     {
         public List<AgarElement> Elements;
-        public const long MaxMass = 60 * 1000;
-        public const long MaxViruses = 100;  
-
         public World  World { get; private set;}
-
         public long MouseX {get; set; }
         public long MouseY {get; set; }
 

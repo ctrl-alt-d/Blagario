@@ -2,7 +2,7 @@
 
 This is just an experimental lab to test to make a multiplayer web game without javascript (or almost without). Components:
 
-* blazor ( netcore 3 preview 6 )
+* blazor ( netcore 3 preview 7 )
 * html
 * css
 
@@ -16,7 +16,7 @@ This is not a real project, just a lab to enjoy and for experimental purposes (c
 * Each element has a `Tic` method who makes game move on.
 * They are a `HostedService` who calls the `Tic`s.
 * `Universe` is injected as `AddSingleton`: one Universe for all people.
-* `Cell` is injected as `Scoped`: one Cell for each gamer (connection).
+* `Player` is injected as `Scoped`: one Cell for Player (connection).
 * Mouse is tracked by blazor ( `@onmousemove`'s `UIMouseEventArgs` )
 
 ### Collaboration wanted:
