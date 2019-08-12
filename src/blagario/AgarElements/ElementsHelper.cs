@@ -17,7 +17,7 @@ namespace blagario.elements
             return r.Value;
         }        
 
-        public static double TwoElementsDistance( AgarElement one, AgarElement other ) => 
+        public static double TwoElementsCenterDistance( AgarElement one, AgarElement other ) => 
             Math.Sqrt(   
                 Math.Pow(one.X - other.X, 2) + 
                 Math.Pow(one.Y - other.Y, 2) 
@@ -25,7 +25,13 @@ namespace blagario.elements
 
         public static bool CanOneElementEatsOtherOneByDistance(AgarElement oneElement, AgarElement otherElement)
         {
-            var r = ElementsHelper.TwoElementsDistance(oneElement, otherElement) + otherElement.Radius * 0.4 < oneElement.Radius;
+            var r = ElementsHelper.TwoElementsCenterDistance(oneElement, otherElement) + otherElement.Radius * 0.4 < oneElement.Radius;
+            return r;
+        }
+
+        public static bool Collides(AgarElement oneElement, AgarElement otherElement)
+        {
+            var r = ElementsHelper.TwoElementsCenterDistance(oneElement, otherElement) <= oneElement.Radius +  otherElement.Radius;
             return r;
         }
 
@@ -35,6 +41,33 @@ namespace blagario.elements
             return r;
         }
 
-        
+        public static bool CanOneElementEatsOtherOneByCellGroup(AgarElement oneElement, AgarElement otherElement)
+        {
+            var bothAreCellParts = oneElement.ElementType != ElementType.CellPart && otherElement.ElementType != ElementType.CellPart;
+            if (!bothAreCellParts) return true;
+
+            var oneCellPartElement = oneElement as CellPart;
+            var otherCellPartElement = otherElement as CellPart;
+
+            var sameCell = oneCellPartElement.Cell == otherCellPartElement.Cell;
+            if (!sameCell) return true;
+
+            var bothEatables = oneCellPartElement.EatableByMySelf && otherCellPartElement.EatableByMySelf;
+            return bothEatables;
+
+            
+        }
+
+        public static Int64 TryConvert(object n)
+        {
+            try{
+                return Convert.ToInt64(n);
+            }
+            catch
+            {
+                return 0;
+            }
+            
+        }
     }
 }

@@ -42,14 +42,31 @@ namespace blagario
         
         protected void TrackMouse(UIMouseEventArgs e)
         {
-            var bx = Player.XPysics2Game((long)e.ClientX);
-            var by = Player.YPysics2Game((long)e.ClientY);
+            var bx = Player.XPysics2Game(ElementsHelper.TryConvert(e.ClientX));
+            var by = Player.YPysics2Game(ElementsHelper.TryConvert(e.ClientY));
             Player.PointTo( bx, by);
         }
 
         protected void MouseWheel(UIWheelEventArgs e)
         {
             Player.IncreaseZoom( - (float)(e.DeltaY/100.0) );
+        }
+
+        protected void KeyDown(UIKeyboardEventArgs e)
+        {
+            //Issue: KeyDown only is fired when input has focus.
+            //System.Console.WriteLine( $"Presset: [{e.Key}]"  );
+            switch (e.Key)
+            {
+                case " ":
+                    Player.Cell.Split();
+                break;
+            }
+        }
+
+        protected void OnClick(UIMouseEventArgs e)
+        {
+            Player.Cell.Split();
         }
 
         protected async override Task OnAfterRenderAsync()
@@ -62,7 +79,9 @@ namespace blagario
         }
         protected async Task OnAfterFirstRenderAsync()
         {
-            await Player.CheckVisibleArea(JsRuntime);
+            await Player.CheckVisibleArea(JsRuntime);    
+            await Player.SetFocusToUniverse(JsRuntime);
         }
+
     }
 }

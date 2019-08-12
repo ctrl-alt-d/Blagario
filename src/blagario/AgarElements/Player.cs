@@ -11,7 +11,7 @@ namespace blagario.elements
         public Player(Universe universe)
         {
             Universe = universe;
-            Cell = null ; //new Cell(universe);
+            Cell = new Cell(this.Universe);
             Universe.World.OnTicReached += OnTicEvent;
         }
         public string FormCss => $@"
@@ -23,16 +23,19 @@ namespace blagario.elements
         public string Name {set; get;} 
         public void Play()
         {
-            Cell = new Cell(Universe);
-            Cell.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
+
+            var cellPart = new CellPart(Universe, Cell);
+            cellPart.Name = string.IsNullOrEmpty(Name)?"Unnamed cell":Name;
+            this.Cell.Add(cellPart);
+
         }
 
-        private void OnTicEvent(object o, EventArgs e) => this.Tic();
+        private void OnTicEvent(object o, WorldTicEventArgs e) => this.Tic(e.FpsTicNum);
 
         public Cell Cell {get; private set;}
 
-        public double CurrentX => Cell?.X ?? (Universe.World.X/2);
-        public double CurrentY => Cell?.Y ?? (Universe.World.Y/2);
+        public double CurrentX => Cell.X ?? (Universe.World.X/2);
+        public double CurrentY => Cell.Y ?? (Universe.World.Y/2);
 
         /* --- */
         public IJSRuntime JsRuntime {get; private set;}
@@ -48,24 +51,24 @@ namespace blagario.elements
             var distance_to_cell = ( x - CurrentX ) * this.Zoom;
             var center_point = this.VisibleAreaX / 2;
             var distance_to_center_point = center_point + distance_to_cell;
-            return (long) distance_to_center_point;
+            return ElementsHelper.TryConvert( distance_to_center_point );
         }
         public long YGame2Physics( double y )
         {
             var distance_to_cell = ( y - CurrentY ) * this.Zoom;
             var center_point = this.VisibleAreaY / 2;
             var distance_to_center_point = center_point + distance_to_cell;
-            return (long) distance_to_center_point;
+            return ElementsHelper.TryConvert( distance_to_center_point );
         }
 
         /* --- */
         public long XGame2World( double x )
         {
-            return (long) ( x * this.Zoom);
+            return ElementsHelper.TryConvert( x * this.Zoom);
         }
         public long YGame2World( double y )
         {
-            return (long) ( y * this.Zoom);
+            return ElementsHelper.TryConvert( y * this.Zoom);
         }
 
         internal void IncreaseZoom(float v)
@@ -75,15 +78,12 @@ namespace blagario.elements
 
         internal void PointTo(double bx, double by)
         {
-            Cell?.PointTo(bx, by);
+            Cell.PointTo(bx, by);
         }
 
-        public void Tic()
+        public void Tic(int fpsTicNum)
         {
-            if ( (this.Cell?.Mass??0) == 0 ) 
-            {
-                this.Cell = null;
-            }
+            this.Cell.Purge();
 
             if (DeltaZoom<0 && Zoom<0.5)
             {
@@ -100,6 +100,11 @@ namespace blagario.elements
                 var d = DeltaZoom / 20;
                 DeltaZoom -= d;
                 Zoom += d;
+            }
+
+            if ( !Cell.IsDead && (fpsTicNum+8) % TimedHostedService.fps == 0)
+            {                
+                Task.Run( async () => await SetFocusToUniverse() );
             }
         }
 
@@ -125,7 +130,7 @@ namespace blagario.elements
             if (e==null) return false;
             if (e.ElementType == ElementType.Universe ) return true;
             if (e.ElementType == ElementType.World ) return true;
-            var nTimesTheDiameter = Math.Max( ( Cell?.Diameter ?? 50 ) * 5, 30);
+            var nTimesTheDiameter = Math.Max( ( Cell.Diameter ?? 50 ) * 5, 30);
             if (CurrentX - e.X + e.Radius > nTimesTheDiameter ) return false;
             if (e.X - e.Radius - CurrentX > nTimesTheDiameter ) return false;
             if (CurrentY - e.Y + e.Radius > nTimesTheDiameter ) return false;
@@ -157,6 +162,12 @@ namespace blagario.elements
             this.VisibleAreaY = visibleArea[1];
             await JsRuntime.InvokeAsync<object>("AreaResized", CreateDotNetObjectRef(this) );
         }            
+
+        public async Task SetFocusToUniverse(IJSRuntime jsRuntime = null)
+        {
+            JsRuntime = jsRuntime ?? JsRuntime;
+            await JsRuntime.InvokeAsync<object>("SetFocusToUniverse");
+        }   
 
         #region Hack to fix https://github.com/aspnet/AspNetCore/issues/11159
 

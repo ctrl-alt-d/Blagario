@@ -9,20 +9,23 @@ namespace blagario.elements
         World,
         Virus,
         Pellet,
-        Cell,
+        CellPart,
         W
     }
     public class AgarElement
     {
         protected static readonly Random getrandom = new Random();
-
+        private Guid key = Guid.NewGuid();
+        public string Key => key.ToString();
         public ElementType ElementType {get; protected set; }
         public string Name {get; set;} = "";
         public double X {set; get; }
         public double Y {set; get; }
         public double _Mass {set; get; }
         public double _EatedMass {set; get; } = 0;
+        public virtual bool EatableByMySelf {set; get; } = false;
         public long Mass => (int)_Mass;
+        public virtual long MaxMass {set; get; } = 20000;
         public virtual async Task Tic(int fpsTicNum) 
         { 
             double eat = 0;
@@ -39,15 +42,15 @@ namespace blagario.elements
         public virtual double Radius => ElementsHelper.GetRadiusFromMass(this.Mass);
 
         public virtual double Diameter => Radius * 2;
-        public long CssX => (long)(X-Radius);
-        public long CssY => (long)(Y-Radius);
+        public long CssX =>ElementsHelper.TryConvert(X-Radius);
+        public long CssY =>ElementsHelper.TryConvert(Y-Radius);        
         public Universe Universe {get; protected set;}
         public string CssClass => this.GetType().Name.ToLower();
         public virtual string CssStyle( Player c) => $@"
             top: {(c.YGame2World(CssY)).ToString()}px ;
             left: {(c.XGame2World(CssX)).ToString()}px ;
-            width: {((long)(Diameter * c.Zoom)).ToString()}px ;
-            height: {((long)(Diameter * c.Zoom)).ToString()}px ;
+            width: {(ElementsHelper.TryConvert(Diameter * c.Zoom)).ToString()}px ;
+            height: {(ElementsHelper.TryConvert(Diameter * c.Zoom)).ToString()}px ;
             ";
     }
 }
