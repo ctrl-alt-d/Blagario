@@ -42,7 +42,7 @@ namespace blagario.Unit.Tests
 
             // Distance should increase
             Assert.Equal(8, cell.Count );
-            Assert.All<CellPart>( cell, c=> Assert.True(c.X > 400 && c.X < 500) );
+            Assert.All<CellPart>( cell, c=> Assert.True(c.X > 300 && c.X < 505) );
         }
 
     }
