@@ -22,13 +22,13 @@ namespace blagario
         
         protected List<AgarElement> VisibleElements = new List<AgarElement>();
 
-        protected override void OnInit()
+        protected override void OnInitialized()
         {      
             Universe.World.OnTicReached += UpdateUi;
         }
         private void UpdateUi(object sender, EventArgs ea)
         {
-            Invoke(
+            InvokeAsync(
                 () =>
                 {
                     VisibleElements = Universe
