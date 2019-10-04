@@ -23,5 +23,7 @@ This is not a real project, just a lab to enjoy and for experimental purposes (c
 
 [See todo list and make PR's](https://github.com/ctrl-alt-d/Blagario/issues/1)
 
+Make PR to this report and contribute to [hacktoberfest](https://hacktoberfest.digitalocean.com/)
+
 ![screenshot](./screenshots/blagario.gif)
 *Two gamers, two cells*
