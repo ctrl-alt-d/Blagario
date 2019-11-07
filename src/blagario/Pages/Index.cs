@@ -4,18 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using blagario.elements;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-
 namespace blagario
 {
-
     public abstract class BaseIndex : ComponentBase, IDisposable
     {
         [Inject] protected Universe Universe {get; set; }        
         [Inject] protected Player Player {get; set; }
         [Inject] protected IJSRuntime JsRuntime  {get; set; }
 
-        private bool Rendered = false;
         public void Dispose() { 
             Universe.World.OnTicReached -= UpdateUi;
         }
@@ -40,19 +38,19 @@ namespace blagario
                 });
         }
         
-        protected void TrackMouse(UIMouseEventArgs e)
+        protected void TrackMouse(MouseEventArgs e)
         {
             var bx = Player.XPysics2Game(ElementsHelper.TryConvert(e.ClientX));
             var by = Player.YPysics2Game(ElementsHelper.TryConvert(e.ClientY));
             Player.PointTo( bx, by);
         }
 
-        protected void MouseWheel(UIWheelEventArgs e)
+        protected void MouseWheel(WheelEventArgs e)
         {
             Player.IncreaseZoom( - (float)(e.DeltaY/100.0) );
         }
 
-        protected void KeyDown(UIKeyboardEventArgs e)
+        protected void KeyDown(KeyboardEventArgs e)
         {
             //Issue: KeyDown only is fired when input has focus.
             //System.Console.WriteLine( $"Presset: [{e.Key}]"  );
@@ -64,16 +62,15 @@ namespace blagario
             }
         }
 
-        protected void OnClick(UIMouseEventArgs e)
+        protected void OnClick(MouseEventArgs e)
         {
             Player.Cell.Split();
         }
 
-        protected async override Task OnAfterRenderAsync()
+        protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!Rendered) 
+            if (firstRender) 
             {
-                Rendered = true;
                 await OnAfterFirstRenderAsync();
             }            
         }
