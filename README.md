@@ -25,5 +25,5 @@ This is not a real project, just a lab to enjoy and for experimental purposes (c
 
 Make PR to this report and contribute to [hacktoberfest](https://hacktoberfest.digitalocean.com/)
 
-![screenshot](./screenshots/blagario.gif)
+![screenshot](./screenshots/blagario_v1.gif)
 *Two gamers, two cells*
