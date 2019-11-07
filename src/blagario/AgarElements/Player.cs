@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Timers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -43,6 +44,7 @@ namespace blagario.elements
         public long VisibleAreaY { set; get; } 
 
         public float Zoom { set; get; } = 8;
+
         private float DeltaZoom = 0;
 
         /* --- */
@@ -139,19 +141,27 @@ namespace blagario.elements
         }
 
         /* --- */
-        private bool resizing = false;
+        private System.Timers.Timer aTimer;
+
         [JSInvokable]
         public async Task OnBrowserResize()
         {
-            try
+            if (aTimer == null)
             {
-                await Task.Delay(150);
                 await CheckVisibleArea();
+                aTimer = new System.Timers.Timer(500);
+                aTimer.Elapsed += CheckVisibleAreaWrapper;
+                aTimer.AutoReset = false;
             }
-            catch
-            {
+            else{
+                aTimer.Stop();
+                aTimer.Start();              
+            }
+        }
 
-            }
+        private void CheckVisibleAreaWrapper(Object source, ElapsedEventArgs e)
+        {
+            Task.Run( async() => await CheckVisibleArea() );
         }
 
         public async Task CheckVisibleArea(IJSRuntime jsRuntime = null)
@@ -160,7 +170,7 @@ namespace blagario.elements
             var visibleArea = await JsRuntime.InvokeAsync<long[]>("GetSize");
             this.VisibleAreaX = visibleArea[0];
             this.VisibleAreaY = visibleArea[1];
-            await JsRuntime.InvokeAsync<object>("AreaResized", CreateDotNetObjectRef(this) );
+            await JsRuntime.InvokeAsync<object>("AreaResized", DotNetObjectReference.Create(this) );
         }            
 
         public async Task SetFocusToUniverse(IJSRuntime jsRuntime = null)
@@ -169,37 +179,10 @@ namespace blagario.elements
             await JsRuntime.InvokeAsync<object>("SetFocusToUniverse");
         }   
 
-        #region Hack to fix https://github.com/aspnet/AspNetCore/issues/11159
-
-        public static object CreateDotNetObjectRefSyncObj = new object();
-
-        protected DotNetObjectRef<T> CreateDotNetObjectRef<T>(T value) where T : class
-        {
-            lock (CreateDotNetObjectRefSyncObj)
-            {
-                JSRuntime.SetCurrentJSRuntime(JsRuntime);
-                return DotNetObjectRef.Create(value);
-            }
-        }
-
-        protected void DisposeDotNetObjectRef<T>(DotNetObjectRef<T> value) where T : class
-        {
-            if (value != null)
-            {
-                lock (CreateDotNetObjectRefSyncObj)
-                {
-                    JSRuntime.SetCurrentJSRuntime(JsRuntime);
-                    value.Dispose();
-                }
-            }
-        }
-
         public void Dispose()
         {
             Universe.World.OnTicReached -= OnTicEvent;            
         }
-
-        #endregion
 
     }
 }
