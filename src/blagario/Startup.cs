@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using blagario.elements;
+using BlazorPro.BlazorSize;
 
 namespace blagario
 {
@@ -28,6 +29,7 @@ namespace blagario
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped<ResizeListener>();
             services.AddSingleton<Universe>();
             services.AddScoped<Player>();
             services.AddHostedService<TimedHostedService>();

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Timers;
+using BlazorPro.BlazorSize;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -143,35 +144,13 @@ namespace blagario.elements
         /* --- */
         private System.Timers.Timer aTimer;
 
-        [JSInvokable]
-        public async Task OnBrowserResize()
+        public async void WindowResized(object _, BrowserWindowSize window)
         {
-            if (aTimer == null)
-            {
-                await CheckVisibleArea();
-                aTimer = new System.Timers.Timer(500);
-                aTimer.Elapsed += CheckVisibleAreaWrapper;
-                aTimer.AutoReset = false;
-            }
-            else{
-                aTimer.Stop();
-                aTimer.Start();              
-            }
+            this.VisibleAreaX = window.Width;
+            this.VisibleAreaY = window.Height;
+            Console.WriteLine($" {window} {window.Width} {window.Height} ");
+            await Task.CompletedTask;
         }
-
-        private void CheckVisibleAreaWrapper(Object source, ElapsedEventArgs e)
-        {
-            Task.Run( async() => await CheckVisibleArea() );
-        }
-
-        public async Task CheckVisibleArea(IJSRuntime jsRuntime = null)
-        {
-            JsRuntime = jsRuntime ?? JsRuntime;
-            var visibleArea = await JsRuntime.InvokeAsync<long[]>("GetSize");
-            this.VisibleAreaX = visibleArea[0];
-            this.VisibleAreaY = visibleArea[1];
-            await JsRuntime.InvokeAsync<object>("AreaResized", DotNetObjectReference.Create(this) );
-        }            
 
         public async Task SetFocusToUniverse(IJSRuntime jsRuntime = null)
         {

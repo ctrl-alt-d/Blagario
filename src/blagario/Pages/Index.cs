@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using blagario.elements;
+using BlazorPro.BlazorSize;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -13,6 +14,8 @@ namespace blagario
         [Inject] protected Universe Universe {get; set; }        
         [Inject] protected Player Player {get; set; }
         [Inject] protected IJSRuntime JsRuntime  {get; set; }
+        [Inject] ResizeListener listener {get; set; }
+        BrowserWindowSize browser = new BrowserWindowSize();
 
         public void Dispose() { 
             Universe.World.OnTicReached -= UpdateUi;
@@ -71,12 +74,15 @@ namespace blagario
         {
             if (firstRender) 
             {
+                listener.OnResized += Player.WindowResized;
                 await OnAfterFirstRenderAsync();
             }            
         }
         protected async Task OnAfterFirstRenderAsync()
         {
-            await Player.CheckVisibleArea(JsRuntime);    
+            //this.VisibleAreaX = window.Width;
+            //this.VisibleAreaY = window.Height;
+
             await Player.SetFocusToUniverse(JsRuntime);
         }
 
